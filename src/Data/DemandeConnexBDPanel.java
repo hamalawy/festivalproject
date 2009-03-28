@@ -35,7 +35,9 @@ public class DemandeConnexBDPanel extends JPanel {
 		gbc.gridx=1;
 		gbc.gridwidth=GridBagConstraints.REMAINDER;
 		
-		textUser = new JTextField(10);
+		textUser = new JTextField();
+        textUser.setMinimumSize(new java.awt.Dimension(110, 20));
+        textUser.setPreferredSize(new java.awt.Dimension(110, 20));
 		add(textUser, gbc);
 		
 		//labelPass
@@ -45,13 +47,16 @@ public class DemandeConnexBDPanel extends JPanel {
 		
 		labelPass = new JLabel("Password : ");
 		labelPass.setHorizontalAlignment(SwingConstants.RIGHT);
+
 		add(labelPass, gbc);
 		
 		//password
 		gbc.gridx=1;
 		gbc.gridwidth=GridBagConstraints.REMAINDER;
 		
-		password = new JPasswordField(10);
+		password = new JPasswordField();
+        password.setMinimumSize(new java.awt.Dimension(110, 20));
+        password.setPreferredSize(new java.awt.Dimension(110, 20));
 		add(password, gbc);
 
         vecUser.add("cramike");
