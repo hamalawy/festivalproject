@@ -2,7 +2,7 @@ package View.groupe;
 
 import Data.MembreGroupe;
 import View.BarreInfo;
-import java.awt.Dimension;
+
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.Vector;
@@ -57,42 +57,42 @@ public class GroupeInscriptionPanel extends JPanel{
         barreInfo.setText(string);
     }
 
-    void afficherAjoutMembre() {
+    public void afficherAjoutMembre() {
         this.removeAll();
         membre = new Groupe_InscriptionMembrePanel(this);
         gbc = new GridBagConstraints();
         gbc.gridx=0;
         gbc.gridy=0;
-        gbc.anchor=gbc.CENTER;
-        gbc.fill=gbc.HORIZONTAL;
+        gbc.anchor=GridBagConstraints.CENTER;
+        gbc.fill=GridBagConstraints.HORIZONTAL;
 
         add(groupe,gbc);
         gbc.gridy=1;
         add(membre,gbc);
 
         gbc.gridy=2;
-        gbc.gridwidth=gbc.REMAINDER;
+        gbc.gridwidth=GridBagConstraints.REMAINDER;
         add(mainAction, gbc);
 
         this.validate();
     }
 
-    void afficherTableMembre() {
+    public void afficherTableMembre() {
         this.removeAll();
         gbc = new GridBagConstraints();
         Groupe_TablePanel tableMembre = new Groupe_TablePanel(this);
 
         gbc.gridx=0;
         gbc.gridy=0;
-        gbc.anchor=gbc.CENTER;
-        gbc.fill=gbc.HORIZONTAL;
+        gbc.anchor=GridBagConstraints.CENTER;
+        gbc.fill=GridBagConstraints.HORIZONTAL;
 
         add(groupe,gbc);
         gbc.gridy=1;
         add(tableMembre,gbc);
 
         gbc.gridy=2;
-        gbc.gridwidth=gbc.REMAINDER;
+        gbc.gridwidth=GridBagConstraints.REMAINDER;
         add(mainAction, gbc);
         this.validate();
     }
