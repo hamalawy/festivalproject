@@ -9,7 +9,7 @@ public class BDException extends Exception {
     @Override
 	public String toString()
 	{
-		return "Erreur au niveau de la connexion de la BD\nErreur : "+e.getMessage();
+		return "Erreur au niveau de la connexion de la BD\nErreur : "+e.getLocalizedMessage();
 	}
 
 }
