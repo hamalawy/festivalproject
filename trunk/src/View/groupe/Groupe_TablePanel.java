@@ -3,8 +3,6 @@ package View.groupe;
 
 import Business.AllMembresTableModel;
 import Data.MembreGroupe;
-import Controller.Controller;
-import Data.BDException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
