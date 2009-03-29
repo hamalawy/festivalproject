@@ -10,7 +10,6 @@ import java.util.GregorianCalendar;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
-import View.DateException;
 
 public class DatePanel extends JPanel{
 	private JComboBox jour, mois, annee;
@@ -61,7 +60,6 @@ public class DatePanel extends JPanel{
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx=0;
         gbc.gridy=0;
- //       gbc.fill=gbc.BOTH;
 		this.add(jour,gbc);
 
         gbc.gridx=1;
@@ -70,9 +68,6 @@ public class DatePanel extends JPanel{
         gbc.gridx=2;
         gbc.weightx=0;
 		this.add(annee,gbc);
-
-
-
 	}
 
     public void reinit() {
@@ -112,10 +107,8 @@ public class DatePanel extends JPanel{
 			GregorianCalendar anneeNaiss = new GregorianCalendar();
             anneeNaiss.setLenient(false);
 			anneeNaiss.set(anneeStr,moisStr,jourStr);
-            System.out.println(anneeNaiss.get(GregorianCalendar.YEAR)+"/"+anneeNaiss.get(GregorianCalendar.MONTH)+1
-                                +"/"+anneeNaiss.get(GregorianCalendar.DAY_OF_MONTH));
 			return anneeNaiss;
-		}catch(Exception e)
+		} catch(Exception e)
 		{
 			throw new DateException(e);
 		}
