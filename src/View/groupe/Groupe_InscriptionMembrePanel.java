@@ -6,6 +6,7 @@ package View.groupe;
 
 import Data.MembreGroupe;
 import Data.LoginException;
+import View.DateException;
 import View.GestionFocusTextField;
 import Controller.Controller;
 import Data.BDException;
@@ -17,6 +18,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.GregorianCalendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
@@ -203,9 +208,9 @@ public class Groupe_InscriptionMembrePanel extends JPanel {
 
         comboNationalite.setEditable(true);
         try {
-                comboNationalite.setModel(new javax.swing.DefaultComboBoxModel(Controller.getAllNationalite()));
+                comboNationalite.setModel(new javax.swing.DefaultComboBoxModel(Controller.getAllMembreGroupeNationalite()));
         } catch (BDException ex) {
-            groupePanel.setInfoText("Erreur de connexion à la BD");
+            groupePanel.setInfoText(ex.toString());
         } catch (LoginException le) {
             groupePanel.setInfoText(le.toString());
         }
@@ -249,6 +254,10 @@ public class Groupe_InscriptionMembrePanel extends JPanel {
         add(comboDomaine, gridBagConstraints);
     }
 
+    public JButton getButAjouter() {
+        return butAjouter;
+    }
+
     public void reinit() {
         textNom.setText(null);
         textPrenom.setText(null);
@@ -259,17 +268,17 @@ public class Groupe_InscriptionMembrePanel extends JPanel {
         datePanel.reinit();
     }
 
-    public void setHidden(boolean bool) {
-        if (bool) {
-            for (int i = 0; i < this.getComponentCount(); i++) {
-                this.getComponent(i).setVisible(false);
-            }
-        } else {
-            for (int i = 0; i < this.getComponentCount(); i++) {
-                this.getComponent(i).setVisible(true);
-            }
-        }
+    public boolean verify() {
+        if(textNom.getText().isEmpty() ||
+                textPrenom.getText().isEmpty() ||
+                textPseudo.getText().isEmpty() ||
+                //(((String)comboInstrument.getSelectedItem()).isEmpty() && comboDomaine.getSelectedIndex()==1) ||
+                ((String)comboNationalite.getSelectedItem()).isEmpty())
+            return false;
+        else
+            return true;
     }
+
 
     private class ActionPanelListener implements ActionListener {
 
@@ -282,27 +291,35 @@ public class Groupe_InscriptionMembrePanel extends JPanel {
             } else if (e.getSource() == butAjouterNouveau) {
                 reinit();
 
-
             } else if (e.getSource() == butAjouter) {
                 VerifyData v = new VerifyData();
-                try {
-                    System.out.println("Instrument : "+(String)comboInstrument.getModel().getSelectedItem());
-                    MembreGroupe membre = new MembreGroupe(
-                            v.getSQLString(textNom.getText()),
-                            v.getSQLString(textPrenom.getText()),
-                            v.getSQLString(textPseudo.getText()),
-                            v.getSQLString((String) comboNationalite.getModel().getSelectedItem()),
-                            v.getSQLString((String) comboDomaine.getModel().getSelectedItem()),
-                            (comboInstrument.isEnabled())? v.getSQLString((String) comboInstrument.getModel().getSelectedItem() ) :null,
-                            null);
-                    groupePanel.getVectMembreGroupe().add(membre);
-                } catch (VerifyDataException ex) {
-                    System.out.println("Erreur lors de l'ajout du membre");
-                /*} catch (DateException de) {
-                System.out.println("erreur de date");*/
+               
+                if (verify()) {
+                    try {
+                        java.sql.Date date = new java.sql.Date(datePanel.getDate().getTimeInMillis());
+                        System.out.println(date.toString());
+                        System.out.println("Instrument : " + (String) comboInstrument.getModel().getSelectedItem());
+                        MembreGroupe membre = new MembreGroupe(
+                                v.getSQLString(textNom.getText()),
+                                v.getSQLString(textPrenom.getText()),
+                                v.getSQLString(textPseudo.getText()),
+                                v.getSQLString((String) comboNationalite.getModel().getSelectedItem()),
+                                v.getSQLString((String) comboDomaine.getModel().getSelectedItem()),
+                                (comboInstrument.isEnabled()) ? v.getSQLString((String) comboInstrument.getModel().getSelectedItem()) : null,
+                                date);
+                        groupePanel.getVectMembreGroupe().add(membre);
+                        groupePanel.afficherTableMembre();
+                    } catch (DateException ex) {
+                        groupePanel.setInfoText("Date incorrecte");
+                    } catch (VerifyDataException ex) {
+                        System.out.println("Erreur lors de l'ajout du membre");
+                        /*} catch (DateException de) {
+                        System.out.println("erreur de date");*/
+                    }
                 }
-
-                groupePanel.afficherTableMembre();
+                else {
+                    groupePanel.setInfoText("Tuuuuuuuutttt");
+                }
             }
         }
     }
@@ -317,7 +334,6 @@ public class Groupe_InscriptionMembrePanel extends JPanel {
                     comboInstrument.setEnabled(false);
                 } else if (e.getStateChange() == ItemEvent.SELECTED && comboDomaine.getSelectedIndex() != 0) {
                     comboInstrument.setEnabled(true);
-                    System.out.println(comboInstrument.getModel().getSelectedItem().toString());
                 }
             }
         }
