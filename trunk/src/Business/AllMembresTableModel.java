@@ -1,6 +1,7 @@
 package Business;
 
 import Data.MembreGroupe;
+import java.util.GregorianCalendar;
 import java.util.Vector;
 import javax.swing.table.AbstractTableModel;
 
@@ -20,8 +21,8 @@ public class AllMembresTableModel extends AbstractTableModel {
         columnNames.add("Prénom");
         columnNames.add("Nationalité");
         columnNames.add("Domaine");
-        columnNames.add("Date naissance");
         columnNames.add("Instrument");
+        columnNames.add("Date naissance");
     }
 
     @Override
@@ -53,7 +54,7 @@ public class AllMembresTableModel extends AbstractTableModel {
             case 4:
                 return (mem.getInstrument() != null)?new String(mem.getInstrument()) : null;
             case 5:
-                return mem.getDateNaiss();
+                return new String(mem.getDateNaiss().toString());
             default:
                 return null;
         }
@@ -79,7 +80,7 @@ public class AllMembresTableModel extends AbstractTableModel {
                 c = String.class;
                 break;
             case 5:
-                c = java.sql.Date.class;
+                c = String.class;
                 break;
         }
         return c;
