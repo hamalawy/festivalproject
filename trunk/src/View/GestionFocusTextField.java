@@ -19,10 +19,12 @@ public class GestionFocusTextField implements FocusListener
     {
     	private Color color;
 		
+    @Override
 		public void focusGained(FocusEvent e) {
 			// TODO Auto-generated method stub
 		}
 		
+    @Override
 		public void focusLost(FocusEvent e) {
 			// TODO Auto-generated method stub
 			JTextField text = (JTextField)e.getSource();
