@@ -23,7 +23,39 @@ public class DatePanel extends JPanel{
 		this.setSize(180, 40);
 		//this.setLayout(new BorderLayout());
 		this.setLayout(new GridBagLayout());
-		jour = new JComboBox();
+
+	}
+
+    public void reinit() {
+        mois.setSelectedIndex(0);
+        annee.setSelectedIndex(0);
+        jour.setSelectedIndex(0);
+    }
+
+	private void initialiseCombobox()
+	{
+		GregorianCalendar today = new GregorianCalendar();
+
+        int anneeNow=today.get(GregorianCalendar.YEAR);
+
+		for(int i = 0;i<31; i++)
+		{
+			tJour[i]=Integer.toString(i+1);
+		}
+		for(int i = 0;i<12;i++)
+		{
+			tMois[i]=Integer.toString(i+1);
+		}
+
+		for(int i = 0; i < 70; i++)
+		{
+			tAn[i]=Integer.toString(anneeNow);
+			anneeNow--;
+		}
+
+
+        //Placement
+        jour = new JComboBox();
         jour.setModel(new DefaultComboBoxModel(tJour));
 		mois = new JComboBox();
         mois.setModel(new DefaultComboBoxModel(tMois));
@@ -54,9 +86,7 @@ public class DatePanel extends JPanel{
         annee.setMaximumSize(annee.getMinimumSize());
         annee.setPreferredSize(annee.getMinimumSize());
 
-/*		jour.addItemListener(gc);
-		mois.addItemListener(gc);
-		annee.addItemListener(gc);*/
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx=0;
         gbc.gridy=0;
@@ -70,33 +100,7 @@ public class DatePanel extends JPanel{
 		this.add(annee,gbc);
 	}
 
-    public void reinit() {
-        mois.setSelectedIndex(0);
-        annee.setSelectedIndex(0);
-        jour.setSelectedIndex(0);
-
-    }
-
-	private void initialiseCombobox()
-	{
-		GregorianCalendar today = new GregorianCalendar();
-		int annee=today.get(GregorianCalendar.YEAR);
-
-		for(int i = 0;i<31; i++)
-		{
-			tJour[i]=Integer.toString(i+1);
-		}
-		for(int i = 0;i<12;i++)
-		{
-			tMois[i]=Integer.toString(i+1);
-		}
-
-		for(int i = 0; i < 70; i++)
-		{
-			tAn[i]=Integer.toString(annee);
-			annee--;
-		}
-	}
+    
 	public GregorianCalendar getDate() throws DateException
 	{
         int anneeStr, moisStr, jourStr;
