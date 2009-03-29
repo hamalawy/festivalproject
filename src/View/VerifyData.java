@@ -85,7 +85,7 @@ public class VerifyData {
         } else {
             throw new VerifyDataException();
         }
-
+        modStr = modStr.toLowerCase();
         return modStr;
     }
 
