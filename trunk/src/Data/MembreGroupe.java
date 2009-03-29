@@ -1,8 +1,8 @@
 
 package Data;
 
-import java.sql.Date;
 import java.util.GregorianCalendar;
+
 
 /**
  *
@@ -12,10 +12,10 @@ import java.util.GregorianCalendar;
 public class MembreGroupe {
 
     private String nom, prenom, nationalite, domaine, instrument, surnom;
-    private Date dateNaiss;
+    private java.sql.Date dateNaiss;
 
 
-    public MembreGroupe(String nom, String prenom, String surnom, String nationalite, String domaine, String instrument, Date dateNaiss) {
+    public MembreGroupe(String nom, String prenom, String surnom, String nationalite, String domaine, String instrument, java.sql.Date dateNaiss) {
         this.nom = nom;
         this.prenom = prenom;
         this.surnom = surnom;
@@ -29,7 +29,7 @@ public class MembreGroupe {
         return surnom;
     }
 
-    public Date getDateNaiss() {
+    public java.sql.Date getDateNaiss() {
         return dateNaiss;
     }
 

@@ -3,6 +3,7 @@ package Data;
 public class Groupe {
 	private String nom, nationalite, genre, popularite, siteWeb;
 	private double cout;
+    
 	public Groupe(String nom, String nationalite, String genre,
 			String popularite, String siteWeb, double cout) {
 		super();

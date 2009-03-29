@@ -38,6 +38,7 @@ public class DemandeConnexBDPanel extends JPanel {
 		textUser = new JTextField();
         textUser.setMinimumSize(new java.awt.Dimension(110, 20));
         textUser.setPreferredSize(new java.awt.Dimension(110, 20));
+        textUser.requestFocusInWindow();
 		add(textUser, gbc);
 		
 		//labelPass
