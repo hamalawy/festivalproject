@@ -32,7 +32,7 @@ public class BarreMenu extends JMenuBar{
 	public BarreMenu(MainFrame frame)
 	{
 		this.frame = frame;
-		
+        
 		//Déclaration des JMenu
 		fichier = new JMenu("Fichier");
 		stand = new JMenu("Stand");
@@ -109,7 +109,7 @@ public class BarreMenu extends JMenuBar{
 		//Add au fichier
 		fichier_quitter.addActionListener(am);
 		fichier.add(fichier_quitter);
-		
+
 		//Add au stand
 		stand_inscription.addActionListener(am);
 		stand.add(stand_inscription);
@@ -197,6 +197,6 @@ public class BarreMenu extends JMenuBar{
 			if(e.getSource() == scene_listing)	
 				frame.afficherSceneListing();  
 		}
-		
+
 	}
 }
