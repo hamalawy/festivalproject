@@ -82,7 +82,7 @@ public class MainFrame extends JFrame{
 	public void afficherGroupeInscription() {
 		this.cont.removeAll();
 		this.cont.add(barreInfo,BorderLayout.SOUTH);
-		this.cont.add(new GroupeInscriptionPanel(barreInfo),BorderLayout.CENTER);
+		this.cont.add(new GroupeInscriptionPanel(this),BorderLayout.CENTER);
 		this.cont.validate();
 	}
 	public void afficherGroupeAnnulation() {
