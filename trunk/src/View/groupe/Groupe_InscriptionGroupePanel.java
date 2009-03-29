@@ -1,9 +1,17 @@
 package View.groupe;
 
+import Controller.Controller;
+import Data.BDException;
+import Data.Groupe;
+import Data.LoginException;
 import View.GestionFocusTextField;
+import View.VerifyData;
+import View.VerifyDataException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
@@ -12,7 +20,6 @@ public class Groupe_InscriptionGroupePanel extends JPanel {
 
     private javax.swing.JPanel ActionPanel;
     private javax.swing.JButton butReinit;
-    private javax.swing.JButton butSauver;
     private javax.swing.JComboBox comboPopularite;
     private javax.swing.JLabel labelCout;
     private javax.swing.JLabel labelGenreGroupe;
@@ -21,8 +28,8 @@ public class Groupe_InscriptionGroupePanel extends JPanel {
     private javax.swing.JLabel labelPopularite;
     private javax.swing.JLabel labelSiteWeb;
     private javax.swing.JTextField textCout;
-    private javax.swing.JTextField textGenre;
-    private javax.swing.JTextField textNationalite;
+    private javax.swing.JComboBox comboGenre;
+    private javax.swing.JComboBox  comboNationalite;
     private javax.swing.JTextField textNomGroupe;
     private javax.swing.JTextField textSiteWeb;
     private java.awt.GridBagConstraints gridBagConstraints;
@@ -41,9 +48,9 @@ public class Groupe_InscriptionGroupePanel extends JPanel {
         labelNomGroupe = new javax.swing.JLabel();
         textNomGroupe = new javax.swing.JTextField();
         labelNationaliteGroupe = new javax.swing.JLabel();
-        textNationalite = new javax.swing.JTextField();
+        comboNationalite = new javax.swing.JComboBox();
         labelGenreGroupe = new javax.swing.JLabel();
-        textGenre = new javax.swing.JTextField();
+        comboGenre = new javax.swing.JComboBox();
         labelPopularite = new javax.swing.JLabel();
         labelSiteWeb = new javax.swing.JLabel();
         textSiteWeb = new javax.swing.JTextField();
@@ -51,7 +58,6 @@ public class Groupe_InscriptionGroupePanel extends JPanel {
         textCout = new javax.swing.JTextField();
         ActionPanel = new javax.swing.JPanel();
         butReinit = new javax.swing.JButton();
-        butSauver = new javax.swing.JButton();
         comboPopularite = new javax.swing.JComboBox();
 
         bordureDeBase = textNomGroupe.getBorder();
@@ -79,13 +85,21 @@ public class Groupe_InscriptionGroupePanel extends JPanel {
         gridBagConstraints.insets = new java.awt.Insets(5, 20, 5, 5);
         add(labelNationaliteGroupe, gridBagConstraints);
 
-        textNationalite.setMinimumSize(new java.awt.Dimension(110, 20));
-        textNationalite.setPreferredSize(new java.awt.Dimension(110, 20));
-        textNationalite.addFocusListener(gestionFocus);
+        comboNationalite.setMinimumSize(new java.awt.Dimension(110, 20));
+        comboNationalite.setPreferredSize(new java.awt.Dimension(110, 20));
+        comboNationalite.setEditable(true);
+        try {
+            comboNationalite.setModel(new javax.swing.DefaultComboBoxModel(Controller.getAllGroupeNationalite()));
+        } catch (BDException ex) {
+            groupePanel.setInfoText(ex.toString());
+        } catch (LoginException le) {
+            groupePanel.setInfoText(le.toString());
+        }
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LAST_LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 5);
-        add(textNationalite, gridBagConstraints);
+        add(comboNationalite, gridBagConstraints);
 
         labelGenreGroupe.setText("Genre :");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -94,14 +108,21 @@ public class Groupe_InscriptionGroupePanel extends JPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 5, 5);
         add(labelGenreGroupe, gridBagConstraints);
 
-        textGenre.setMinimumSize(new java.awt.Dimension(110, 20));
-        textGenre.setPreferredSize(new java.awt.Dimension(110, 20));
-        textGenre.addFocusListener(gestionFocus);
+        comboGenre.setMinimumSize(new java.awt.Dimension(110, 20));
+        comboGenre.setPreferredSize(new java.awt.Dimension(110, 20));
+        comboGenre.setEditable(true);
+        try {
+            comboGenre.setModel(new javax.swing.DefaultComboBoxModel(Controller.getAllGenre()));
+        } catch (BDException ex) {
+            groupePanel.setInfoText(ex.toString());
+        } catch (LoginException le) {
+            groupePanel.setInfoText(le.toString());
+        }
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 0);
-        add(textGenre, gridBagConstraints);
+        add(comboGenre, gridBagConstraints);
 
         labelPopularite.setText("Popularité :");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -171,22 +192,37 @@ public class Groupe_InscriptionGroupePanel extends JPanel {
 
     private boolean verify() {
         if (this.textCout.getText().isEmpty() ||
-                this.textGenre.getText().isEmpty() ||
-                this.textNationalite.getText().isEmpty() ||
-                this.textNomGroupe.getText().isEmpty()) {
+                ((String)this.comboGenre.getSelectedItem()).isEmpty() ||
+                ((String)this.comboNationalite.getSelectedItem()).isEmpty() ||
+                this.textNomGroupe.getText().isEmpty() ||
+                ((String)this.comboPopularite.getSelectedItem()).isEmpty()) {
             return false;
         } else {
             return true;
         }
     }
 
+    public Groupe getGroupe() throws GroupeNotAcceptedException {
+        VerifyData v;
+        if(verify()) {
+            try {
+                v = new VerifyData();
+                Groupe newGroupe = new Groupe(v.getSQLString(textNomGroupe.getText()), v.getSQLString((String) comboNationalite.getSelectedItem()), v.getSQLString((String) comboGenre.getSelectedItem()), v.getSQLString((String) comboPopularite.getSelectedItem()), v.getSQLString(textSiteWeb.getText()), v.getSQLDouble(textCout.getText(), true));
+                return newGroupe;
+            } catch (VerifyDataException ex) {
+                throw new GroupeNotAcceptedException();
+            }
+        } else
+            throw new GroupeNotAcceptedException();
+    }
+
     private void reinit() {
         this.textCout.setText(null);
         this.textCout.setBorder(bordureDeBase);
-        this.textGenre.setText(null);
-        this.textGenre.setBorder(bordureDeBase);
-        this.textNationalite.setText(null);
-        this.textNationalite.setBorder(bordureDeBase);
+        this.comboGenre.setSelectedIndex(0);
+        this.comboGenre.setBorder(bordureDeBase);
+        this.comboNationalite.setSelectedIndex(0);
+        this.comboNationalite.setBorder(bordureDeBase);
         this.textNomGroupe.setText(null);
         this.textNomGroupe.setBorder(bordureDeBase);
         this.textSiteWeb.setText(null);
@@ -195,34 +231,8 @@ public class Groupe_InscriptionGroupePanel extends JPanel {
 
     private class GestionAction implements ActionListener {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
-            // TODO Auto-generated method stub
-          /*if (e.getSource() == butSauver) {
-            if (verify()) {
-            double coutDouble;
-            VerifyData vStr = new VerifyData();
-            try {
-            coutDouble = vStr.getSQLDouble(textCout.getText(), true);
-            String popularite = new String((String) comboPopularite.getModel().getSelectedItem());
-
-            Groupe newGroupe = new Groupe(
-            vStr.getSQLString(textNomGroupe.getText()),
-            vStr.getSQLString(textNationalite.getText()),
-            vStr.getSQLString(textGenre.getText()),
-            popularite,
-            vStr.getSQLString(textSiteWeb.getText()),
-            coutDouble);
-            Controller.createGroupe(newGroupe);
-
-            } catch (BDException bde) {
-            JOptionPane.showMessageDialog(null, bde);
-            bde.printStackTrace();
-            } catch (VerifyDataException vde) {
-            vde.printStackTrace();
-            } catch (Exception exc) {
-            JOptionPane.showMessageDialog(null, exc);
-            exc.printStackTrace();
-            }}*/
             if (e.getSource() == butReinit) {
                     reinit();
                 }
