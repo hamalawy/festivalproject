@@ -17,20 +17,30 @@ public class Controller {
 		gs.createStand(newStand);
 	}
 
-	public static void createGroupe(Groupe newGroupe) throws BDException, LoginException {
+	public static void createGroupe(Groupe newGroupe, Vector <MembreGroupe> vectMembreGroupe) throws BDException, LoginException {
 		// TODO Auto-generated method stub
 		GestionGroupeBD gs = new GestionGroupeBD();
-		gs.createGroupe(newGroupe);
+		gs.createGroupe(newGroupe, vectMembreGroupe);
 	}
+
+    public static Vector<String> getAllGenre() throws BDException, LoginException {
+        GestionGroupeBD gs = new GestionGroupeBD();
+        return gs.getAllGenre();
+    }
 
     public static Vector<MembreGroupe> getAllMembreGroupe() throws BDException, LoginException {
         GestionGroupeBD gs = new GestionGroupeBD();
         return gs.getAllMembreGroupe();
     }
 
-    public static Vector<String> getAllNationalite() throws BDException, LoginException
+    public static Vector<String> getAllGroupeNationalite() throws BDException, LoginException {
+        GestionGroupeBD gg = new GestionGroupeBD();
+        return gg.getAllGroupeNationalite();
+    }
+
+    public static Vector<String> getAllMembreGroupeNationalite() throws BDException, LoginException
     {
         GestionGroupeBD gg = new GestionGroupeBD();
-        return gg.getAllNationalite();
+        return gg.getAllMembreGroupeNationalite();
     }
 }
