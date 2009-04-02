@@ -11,17 +11,22 @@ import java.util.Vector;
 
 public class Controller {
 
-	public static void createStand(Stand newStand) throws BDException, LoginException {
-		// TODO Auto-generated method stub
-		GestionStandBD gs = new GestionStandBD();
-		gs.createStand(newStand);
-	}
+    public static void createStand(Stand newStand) throws BDException, LoginException {
+        // TODO Auto-generated method stub
+        GestionStandBD gs = new GestionStandBD();
+        gs.createStand(newStand);
+    }
 
-	public static void createGroupe(Groupe newGroupe, Vector <MembreGroupe> vectMembreGroupe) throws BDException, LoginException {
-		// TODO Auto-generated method stub
-		GestionGroupeBD gs = new GestionGroupeBD();
-		gs.createGroupe(newGroupe, vectMembreGroupe);
-	}
+    public static void createGroupe(Groupe newGroupe, Vector<MembreGroupe> vectMembreGroupe) throws BDException, LoginException {
+        // TODO Auto-generated method stub
+        GestionGroupeBD gs = new GestionGroupeBD();
+        gs.createGroupe(newGroupe, vectMembreGroupe);
+    }
+
+    public static void deleteMembreGroupe(MembreGroupe membre) {
+        GestionGroupeBD gs = new GestionGroupeBD();
+        gs.deleteMembreGroupe(membre);
+    }
 
     public static Vector<String> getAllGenre() throws BDException, LoginException {
         GestionGroupeBD gs = new GestionGroupeBD();
@@ -38,8 +43,7 @@ public class Controller {
         return gg.getAllGroupeNationalite();
     }
 
-    public static Vector<String> getAllMembreGroupeNationalite() throws BDException, LoginException
-    {
+    public static Vector<String> getAllMembreGroupeNationalite() throws BDException, LoginException {
         GestionGroupeBD gg = new GestionGroupeBD();
         return gg.getAllMembreGroupeNationalite();
     }
