@@ -46,6 +46,12 @@ public class GestionGroupeBD {
 
     }
 
+    public void deleteMembreGroupe(MembreGroupe membre) {
+        Connection connex;
+        Statement stat;
+        String supprMembre = "DELETE "
+    }
+
     public Vector<String> getAllGenre() throws BDException, LoginException{
         try {
             Connection connex;
