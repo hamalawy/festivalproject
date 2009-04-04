@@ -30,11 +30,14 @@ public class GroupeInscriptionPanel extends JPanel {
     private JPanel mainAction;
     private boolean isTableDisplayed;
     private MainFrame mainFrame;
+    private GestionAction gestionAction;
 
     public GroupeInscriptionPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         this.setLayout(new GridBagLayout());
         setBorder(BorderFactory.createTitledBorder("Inscription d'un groupe"));
+
+        gestionAction = new GestionAction();
         groupe = new Groupe_InscriptionGroupePanel(this);
 
         //Panel d'action placé en bas de la fenêtre
@@ -48,10 +51,12 @@ public class GroupeInscriptionPanel extends JPanel {
 
         butRetour.setText("Retour");
         butRetour.setToolTipText("Retour à la page d'accueil");
+        butRetour.addActionListener(gestionAction);
         mainAction.add(butRetour);
 
         butEnregistrer.setText("Enregistrer le groupe");
         butEnregistrer.setToolTipText("Enregistrer le groupe dans la base de données");
+        butEnregistrer.addActionListener(gestionAction);
         mainAction.add(butEnregistrer);
 
         //Affichage du panneau d'ajout membre dés le départ
@@ -116,29 +121,34 @@ public class GroupeInscriptionPanel extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == butRetour) {
-                if (JOptionPane.showConfirmDialog(null,
-                        "Etes-vous sûr de vouloir revenir au menu principal sans sauver? \n<html><br><i>les données seront perdues</i>",
-                        "Attention!",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
+                if (!groupe.isEmpty() || !membre.isEmpty() || !vectMembreGroupe.isEmpty()) {
+                    if (JOptionPane.showConfirmDialog(null,
+                            "<html>Etes-vous sûr de vouloir revenir au menu principal sans sauver?<br><br><i>les données inscrites seront perdues</i>",
+                            "Attention!",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
+                        mainFrame.afficherBienvenue();
+                    } else {
+                        if (!isTableDisplayed) 
+                            membre.getButAjouter().requestFocusInWindow();                       
+                    }
+                } else {
                     mainFrame.afficherBienvenue();
                 }
-                else {
-                    membre.getButAjouter().requestFocusInWindow();
-                }
-            } 
-            else if(e.getSource() == butEnregistrer) {
-                    try {
-                        //Enregistrement du groupe
-                        Controller.createGroupe(groupe.getGroupe(), vectMembreGroupe);
 
-                    } catch (GroupeNotAcceptedException ex) {
-                        setInfoText(ex.toString());
-                    } catch (BDException ex) {
-                        setInfoText(ex.toString());
-                    } catch (LoginException ex) {
-                        setInfoText(ex.toString());
-                    }
+            }
+            else if (e.getSource() == butEnregistrer) {
+                try {
+                    //Enregistrement du groupe
+                    Controller.createGroupe(groupe.getGroupe(), vectMembreGroupe);
+                    setInfoText("Ajout du groupe réussi");
+                } catch (GroupeNotAcceptedException ex) {
+                    setInfoText(ex.toString());
+                } catch (BDException ex) {
+                    setInfoText(ex.toString());
+                } catch (LoginException ex) {
+                    setInfoText(ex.toString());
+                }
             }
         }
     }
