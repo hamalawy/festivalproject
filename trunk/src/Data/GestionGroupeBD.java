@@ -11,7 +11,6 @@ import java.sql.Statement;
 import java.util.GregorianCalendar;
 import java.util.Vector;
 
-
 /**
  *
  * @author Cramike
@@ -34,9 +33,38 @@ public class GestionGroupeBD {
             }
             int nbLigne = stat.executeUpdate(ajout);
 
-        //Ajout des membres du groupe
-        stat = connex.createStatement();
-        
+            //Ajout des membres du groupe
+
+
+            for (MembreGroupe m : vectMembre) {
+                boolean trouve = false;
+                stat = connex.createStatement();
+                ResultSet result;
+
+                String rechercheInstrument = "SELECT DISTINCT instrument FROM instrument;";
+                result = stat.executeQuery(rechercheInstrument);
+
+                while (result.next() && !trouve) {
+                    if (result.getString("instrument").compareTo(m.getInstrument()) == 0) {
+                        trouve = true;
+                    }
+                }
+                if (!trouve) {
+                    String ajoutInstrument = "INSERT INTO instrument VALUES ('" + m.getInstrument() + "');";
+                    int nbLigneAjoutInstru = stat.executeUpdate(ajoutInstrument);
+                }
+
+                stat = connex.createStatement();
+                ajout = "INSERT INTO membre_groupe VALUES " +
+                        "('" + m.getNom() + "','" + m.getPrenom() + "','" + m.getSurnom() + "','" + m.getNationalite() +
+                        "','" + m.getDomaine() + "',#" + m.getDateNaiss().toString() + "#,'" + newGroupe.getNom() + "','" + newGroupe.getNationalite() +
+                        "','" + m.getInstrument() + "');";
+                stat.executeUpdate(ajout);
+
+                String ajoutLienInstrument = "INSERT INTO instrument_membre VALUES ("+"'"+m.getNom()+"','"+m.getPrenom()+"','"+m.getInstrument()+"');";
+                stat.executeUpdate(ajoutLienInstrument);
+
+            }
 
 
         } catch (SQLException e) {
@@ -160,7 +188,7 @@ public class GestionGroupeBD {
             return vect;
         }
 
-      
+
 
     }
 }
