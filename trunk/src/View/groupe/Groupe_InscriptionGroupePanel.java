@@ -10,10 +10,8 @@ import View.VerifyDataException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
+import javax.swing.JTextField;
 
 
 public class Groupe_InscriptionGroupePanel extends JPanel {
@@ -36,7 +34,6 @@ public class Groupe_InscriptionGroupePanel extends JPanel {
     private GestionFocusTextField gestionFocus;
     private GestionAction gestionAction;
     private GroupeInscriptionPanel groupePanel;
-    private Border bordureDeBase;
 
     public Groupe_InscriptionGroupePanel(GroupeInscriptionPanel groupePanel) {
         this.groupePanel = groupePanel;
@@ -60,7 +57,6 @@ public class Groupe_InscriptionGroupePanel extends JPanel {
         butReinit = new javax.swing.JButton();
         comboPopularite = new javax.swing.JComboBox();
 
-        bordureDeBase = textNomGroupe.getBorder();
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -202,6 +198,15 @@ public class Groupe_InscriptionGroupePanel extends JPanel {
         }
     }
 
+    public boolean isEmpty(){
+        if (this.textCout.getText().isEmpty() &&
+                this.textNomGroupe.getText().isEmpty()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public Groupe getGroupe() throws GroupeNotAcceptedException {
         VerifyData v;
         if(verify()) {
@@ -217,14 +222,14 @@ public class Groupe_InscriptionGroupePanel extends JPanel {
     }
 
     private void reinit() {
+        JTextField textDeBase = new JTextField();
+
         this.textCout.setText(null);
-        this.textCout.setBorder(bordureDeBase);
+        this.textCout.setBorder(textDeBase.getBorder());
         this.comboGenre.setSelectedIndex(0);
-        this.comboGenre.setBorder(bordureDeBase);
         this.comboNationalite.setSelectedIndex(0);
-        this.comboNationalite.setBorder(bordureDeBase);
         this.textNomGroupe.setText(null);
-        this.textNomGroupe.setBorder(bordureDeBase);
+        this.textNomGroupe.setBorder(textDeBase.getBorder());
         this.textSiteWeb.setText(null);
         this.comboPopularite.setSelectedIndex(0);
     }
