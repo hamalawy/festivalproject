@@ -22,6 +22,10 @@ public class GestionFocusTextField implements FocusListener
     @Override
 		public void focusGained(FocusEvent e) {
 			// TODO Auto-generated method stub
+            JTextField textBase = new JTextField();
+
+            JTextField text = (JTextField)e.getSource();
+            text.setBorder(textBase.getBorder());
 		}
 		
     @Override
