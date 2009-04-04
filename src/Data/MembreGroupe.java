@@ -13,6 +13,8 @@ public class MembreGroupe {
 
     private String nom, prenom, nationalite, domaine, instrument, surnom;
     private java.sql.Date dateNaiss;
+    private boolean instrumentRequest;
+
 
 
     public MembreGroupe(String nom, String prenom, String surnom, String nationalite, String domaine, String instrument, java.sql.Date dateNaiss) {
@@ -22,7 +24,15 @@ public class MembreGroupe {
         this.nationalite = nationalite;
         this.domaine = domaine;
         this.instrument = instrument;
+        if(instrument == null)
+            instrumentRequest = false;
+        else
+            instrumentRequest = true;
         this.dateNaiss = dateNaiss;
+    }
+
+    public boolean isInstrumentRequest() {
+        return instrumentRequest;
     }
 
     public String getSurnom() {
