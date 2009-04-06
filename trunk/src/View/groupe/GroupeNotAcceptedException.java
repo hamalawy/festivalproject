@@ -1,19 +1,31 @@
 
 package View.groupe;
 
+
 /**
  *
  * @author Gérôme Quentin
  * @author Scaillet Bruno
  */
-class GroupeNotAcceptedException extends Exception{
+public class GroupeNotAcceptedException extends Exception{
+
+    private Exception ex;
+
+    public GroupeNotAcceptedException(Exception ex) {
+        ex = new Exception();
+    }
 
     public GroupeNotAcceptedException() {
+
     }
 
     @Override
     public String toString()
     {
-        return "Veuillez compléter tous les champs pour l'enregistrement du groupe svp";
+        if(ex != null)
+            return ex.toString();
+        else
+            return "Impossible d'inscrire le groupe, veuillez vérifier les champs";
+
     }
 }

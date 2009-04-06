@@ -116,6 +116,14 @@ public class GroupeInscriptionPanel extends JPanel {
         this.validate();
     }
 
+    public void afficherModifMembre(MembreGroupe membreToModify) {
+
+        
+        afficherAjoutMembre();
+        membre.setToModify(membreToModify);
+
+    }
+
     private class GestionAction implements ActionListener {
 
         @Override
@@ -144,12 +152,10 @@ public class GroupeInscriptionPanel extends JPanel {
                     setInfoText("Ajout du groupe réussi");
                 } catch (GroupeNotAcceptedException ex) {
                     setInfoText(ex.toString());
-                } catch (BDException ex) {
-                    setInfoText(ex.toString());
-                } catch (LoginException ex) {
-                    setInfoText(ex.toString());
                 }
             }
         }
     }
+
+
 }
