@@ -6,6 +6,8 @@ import Controller.Controller;
 import Data.MembreGroupe;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.JOptionPane;
@@ -27,7 +29,7 @@ public class Groupe_TablePanel extends JPanel{
     private AllMembresTableModel dataModel;
     private GroupeInscriptionPanel groupePanel;
     private Listener actionListener;
-    private MouseListener mouseListener;
+    private ActionTable actionTable;
 
     public Groupe_TablePanel(GroupeInscriptionPanel groupePanel) {
         this.groupePanel = groupePanel;
@@ -45,16 +47,16 @@ public class Groupe_TablePanel extends JPanel{
         
 
         setBorder(javax.swing.BorderFactory.createTitledBorder("Liste des membres"));
-        setMinimumSize(new java.awt.Dimension(450, 175));
-        setPreferredSize(new java.awt.Dimension(450, 175));
+        setMinimumSize(new java.awt.Dimension(540, 175));
+        setPreferredSize(new java.awt.Dimension(540, 175));
         setLayout(new java.awt.BorderLayout(5, 5));
     
-        mouseListener = new mouseListener();
+        actionTable = new ActionTable();
         dataModel = new AllMembresTableModel(groupePanel.getVectMembreGroupe());
         tableMembre.setAutoCreateRowSorter(true);
         tableMembre.setModel(dataModel);
         tableMembre.setBackground(javax.swing.UIManager.getDefaults().getColor("CheckBox.light"));
-        tableMembre.addMouseListener(mouseListener);
+        tableMembre.addFocusListener(actionTable);
         scrollTable.setViewportView(tableMembre);
 
         add(scrollTable, java.awt.BorderLayout.CENTER);
@@ -85,7 +87,11 @@ public class Groupe_TablePanel extends JPanel{
         public void actionPerformed(ActionEvent e) {
             if(e.getSource() == butModifier)
             {
-                //groupePanel.afficherAjoutMembre();
+                MembreGroupe membre = groupePanel.getVectMembreGroupe().elementAt(tableMembre.getSelectedRow());
+                groupePanel.afficherModifMembre(membre);
+                groupePanel.getVectMembreGroupe().removeElementAt(tableMembre.getSelectedRow());
+                butSupprimer.setEnabled(false);
+                butModifier.setEnabled(false);
             }
             else if(e.getSource() == butAjouter)
             {
@@ -97,43 +103,33 @@ public class Groupe_TablePanel extends JPanel{
                         ,JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION){
                       
                 MembreGroupe membre;
-                membre = groupePanel.getVectMembreGroupe().elementAt(tableMembre.getSelectedRow());
-                System.out.print(membre.getNom());
-                Controller.deleteMembreGroupe(membre);
+                membre = groupePanel.getVectMembreGroupe().remove(tableMembre.getSelectedRow());
+                
+                butSupprimer.setEnabled(false);
+                butModifier.setEnabled(false);
+
+                tableMembre.repaint();
                 }
             }
         }
 
     }
     
-    private class mouseListener implements MouseListener{
+    private class ActionTable implements FocusListener{
+
 
         @Override
-        public void mouseClicked(MouseEvent e) {
-            if(e.getSource() == tableMembre) {
-                butSupprimer.setEnabled(true);          
+        public void focusGained(FocusEvent e) {
+            butModifier.setEnabled(true);
+            butSupprimer.setEnabled(true);
+        }
+
+        @Override
+        public void focusLost(FocusEvent e) {
+            if(e.getOppositeComponent() != butModifier && e.getOppositeComponent() != butSupprimer) {
+                butModifier.setEnabled(false);
+                butSupprimer.setEnabled(false);
             }
-            else butSupprimer.setEnabled(false);
-                
-        }
-
-        @Override
-        public void mousePressed(MouseEvent e) {
-
-        }
-
-        @Override
-        public void mouseReleased(MouseEvent e) {
-   
-        }
-
-        @Override
-        public void mouseEntered(MouseEvent e) {
-
-        }
-
-        @Override
-        public void mouseExited(MouseEvent e) {
 
         }
         

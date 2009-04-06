@@ -5,14 +5,11 @@ import Data.BDException;
 import Data.Groupe;
 import Data.LoginException;
 import View.GestionFocusTextField;
-import View.VerifyData;
-import View.VerifyDataException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
 
 public class Groupe_InscriptionGroupePanel extends JPanel {
 
@@ -27,7 +24,7 @@ public class Groupe_InscriptionGroupePanel extends JPanel {
     private javax.swing.JLabel labelSiteWeb;
     private javax.swing.JTextField textCout;
     private javax.swing.JComboBox comboGenre;
-    private javax.swing.JComboBox  comboNationalite;
+    private javax.swing.JComboBox comboNationalite;
     private javax.swing.JTextField textNomGroupe;
     private javax.swing.JTextField textSiteWeb;
     private java.awt.GridBagConstraints gridBagConstraints;
@@ -188,17 +185,17 @@ public class Groupe_InscriptionGroupePanel extends JPanel {
 
     private boolean verify() {
         if (this.textCout.getText().isEmpty() ||
-                ((String)this.comboGenre.getSelectedItem()).isEmpty() ||
-                ((String)this.comboNationalite.getSelectedItem()).isEmpty() ||
+                this.comboGenre.getSelectedItem() == null ||
+                this.comboNationalite.getSelectedItem() == null ||
                 this.textNomGroupe.getText().isEmpty() ||
-                ((String)this.comboPopularite.getSelectedItem()).isEmpty()) {
+                this.comboPopularite.getSelectedItem() == null) {
             return false;
         } else {
             return true;
         }
     }
 
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         if (this.textCout.getText().isEmpty() &&
                 this.textNomGroupe.getText().isEmpty()) {
             return true;
@@ -208,17 +205,14 @@ public class Groupe_InscriptionGroupePanel extends JPanel {
     }
 
     public Groupe getGroupe() throws GroupeNotAcceptedException {
-        VerifyData v;
-        if(verify()) {
-            try {
-                v = new VerifyData();
-                Groupe newGroupe = new Groupe(v.getSQLString(textNomGroupe.getText()), v.getSQLString((String) comboNationalite.getSelectedItem()), v.getSQLString((String) comboGenre.getSelectedItem()), v.getSQLString((String) comboPopularite.getSelectedItem()), v.getSQLString(textSiteWeb.getText()), v.getSQLDouble(textCout.getText(), true));
+       
+        if (verify()) {
+                
+                Groupe newGroupe = new Groupe(textNomGroupe.getText(), (String) comboNationalite.getSelectedItem(), (String) comboGenre.getSelectedItem(), (String) comboPopularite.getSelectedItem(), textSiteWeb.getText(), textCout.getText());
                 return newGroupe;
-            } catch (VerifyDataException ex) {
-                throw new GroupeNotAcceptedException();
-            }
-        } else
+        } else {
             throw new GroupeNotAcceptedException();
+        }
     }
 
     private void reinit() {
@@ -226,8 +220,12 @@ public class Groupe_InscriptionGroupePanel extends JPanel {
 
         this.textCout.setText(null);
         this.textCout.setBorder(textDeBase.getBorder());
-        this.comboGenre.setSelectedIndex(0);
-        this.comboNationalite.setSelectedIndex(0);
+        if (this.comboGenre.getModel() != null) {
+            this.comboGenre.setSelectedIndex(0);
+        }
+        if (this.comboNationalite.getModel() != null) {
+            this.comboNationalite.setSelectedIndex(0);
+        }
         this.textNomGroupe.setText(null);
         this.textNomGroupe.setBorder(textDeBase.getBorder());
         this.textSiteWeb.setText(null);
@@ -239,9 +237,9 @@ public class Groupe_InscriptionGroupePanel extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == butReinit) {
-                    reinit();
-                }
+                reinit();
             }
         }
+    }
     //}
 }

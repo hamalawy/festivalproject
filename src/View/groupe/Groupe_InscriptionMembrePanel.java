@@ -11,8 +11,7 @@ import View.GestionFocusTextField;
 import Controller.Controller;
 import Data.BDException;
 import View.DatePanel;
-import View.VerifyData;
-import View.VerifyDataException;
+
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,7 +26,7 @@ import javax.swing.SwingConstants;
  *
  * @author Cramike
  */
-public class Groupe_InscriptionMembrePanel extends JPanel {
+public  class Groupe_InscriptionMembrePanel extends JPanel {
 
     private javax.swing.JPanel actionPanel;
     private javax.swing.JButton butReinit;
@@ -276,8 +275,8 @@ public class Groupe_InscriptionMembrePanel extends JPanel {
         if (textNom.getText().isEmpty() ||
                 textPrenom.getText().isEmpty() ||
                 textPseudo.getText().isEmpty() ||
-                (((String) comboInstrument.getSelectedItem()).isEmpty() && comboDomaine.getSelectedIndex() == 1) ||
-                ((String) comboNationalite.getSelectedItem()).isEmpty()) {
+                (comboInstrument.getSelectedItem() == null && comboDomaine.getSelectedIndex() == 1) ||
+                comboNationalite.getSelectedItem() == null) {
             return false;
         } else {
             return true;
@@ -294,6 +293,20 @@ public class Groupe_InscriptionMembrePanel extends JPanel {
         }
     }
 
+    void setToModify(MembreGroupe membre) {
+        textNom.setText(membre.getNom());
+        textPrenom.setText(membre.getPrenom());
+        textPseudo.setText(membre.getSurnom());
+        if(membre.getDomaine().equals("Technicien"))
+            comboDomaine.setSelectedIndex(0);
+        else
+            comboDomaine.setSelectedIndex(1);
+
+        comboInstrument.setSelectedItem(membre.getInstrument());
+        comboNationalite.setSelectedItem(membre.getNationalite());
+
+    }
+
     private class ActionPanelListener implements ActionListener {
 
         @Override
@@ -303,61 +316,58 @@ public class Groupe_InscriptionMembrePanel extends JPanel {
             } else if (e.getSource() == butReinit) {
                 reinit();
             } else if (e.getSource() == butAjouterNouveau) {
-                VerifyData v = new VerifyData();
 
                 if (verify()) {
                     try {
                         java.sql.Date date = new java.sql.Date(datePanel.getDate().getTimeInMillis());
-                        System.out.println(date.toString());
-                        System.out.println("Instrument : " + (String) comboInstrument.getModel().getSelectedItem());
+
                         MembreGroupe membre = new MembreGroupe(
-                                v.getSQLString(textNom.getText()),
-                                v.getSQLString(textPrenom.getText()),
-                                v.getSQLString(textPseudo.getText()),
-                                v.getSQLString((String) comboNationalite.getModel().getSelectedItem()),
-                                v.getSQLString((String) comboDomaine.getModel().getSelectedItem()),
-                                (comboInstrument.isEnabled()) ? v.getSQLString((String) comboInstrument.getModel().getSelectedItem()) : null,
+                                textNom.getText(),
+                                textPrenom.getText(),
+                                textPseudo.getText(),
+                                (String) comboNationalite.getModel().getSelectedItem(),
+                                (String) comboDomaine.getModel().getSelectedItem(),
+                                (comboInstrument.isEnabled()) ? (String) comboInstrument.getModel().getSelectedItem() : null,
                                 date);
                         groupePanel.getVectMembreGroupe().add(membre);
                         groupePanel.afficherAjoutMembre();
                     } catch (DateException ex) {
                         groupePanel.setInfoText("Date incorrecte");
-                    } catch (VerifyDataException ex) {
-                        groupePanel.setInfoText("Erreur lors de l'ajout du membre");
                     }
-                } else {
+                }else {
                     groupePanel.setInfoText("Champ(s) incorrect(s) ou incomplet(s)");
                 }
 
             } else if (e.getSource() == butAjouter) {
-                VerifyData v = new VerifyData();
 
                 if (verify()) {
                     try {
                         java.sql.Date date = new java.sql.Date(datePanel.getDate().getTimeInMillis());
-                        System.out.println(date.toString());
-                        System.out.println("Instrument : " + (String) comboInstrument.getModel().getSelectedItem());
                         MembreGroupe membre = new MembreGroupe(
-                                v.getSQLString(textNom.getText()),
-                                v.getSQLString(textPrenom.getText()),
-                                v.getSQLString(textPseudo.getText()),
-                                v.getSQLString((String) comboNationalite.getModel().getSelectedItem()),
-                                v.getSQLString((String) comboDomaine.getModel().getSelectedItem()),
-                                (comboInstrument.isEnabled()) ? v.getSQLString((String) comboInstrument.getModel().getSelectedItem()) : null,
+                                textNom.getText(),
+                                textPrenom.getText(),
+                                textPseudo.getText(),
+                                (String) comboNationalite.getModel().getSelectedItem(),
+                                (String) comboDomaine.getModel().getSelectedItem(),
+                                (comboInstrument.isEnabled()) ? (String) comboInstrument.getModel().getSelectedItem() : null,
                                 date);
                         groupePanel.getVectMembreGroupe().add(membre);
                         groupePanel.afficherTableMembre();
                     } catch (DateException ex) {
                         groupePanel.setInfoText("Date incorrecte");
-                    } catch (VerifyDataException ex) {
-                        groupePanel.setInfoText("Erreur lors de l'ajout du membre");
-                    }
+                    } 
                 } else {
-                    groupePanel.setInfoText("Champ(s) incorrect(s)");
+                    groupePanel.setInfoText("Champ(s) incorrect(s) ou incomplet(s)");
                 }
             }
         }
     }
+
+
+
+
+
+
 
     private class ComboListener implements ItemListener {
 
@@ -374,4 +384,3 @@ public class Groupe_InscriptionMembrePanel extends JPanel {
         }
     }
 }
-    
