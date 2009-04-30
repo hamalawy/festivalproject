@@ -25,7 +25,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -42,6 +42,7 @@ public class GroupeListingPanel extends javax.swing.JPanel {
     private ListeGroupeListener listeListener;
     private ButtonListener boutonListener = new ButtonListener(this);
     private GroupeID groupeEnCours;
+    private int choixMembre; //Sert à savoir quel membre est affiché actuellement;
 
     /** Creates new form GroupeListingPanel */
     public GroupeListingPanel(BarreInfo barreInfo) {
@@ -52,14 +53,15 @@ public class GroupeListingPanel extends javax.swing.JPanel {
         listGroupe.setSelectedIndex(0);
         comboChoixMembre.addItemListener(new ComboMembreListener());
 
+        //Gestion des boutons
         butPrecedent.addActionListener(boutonListener);
         butPrecedent.setEnabled(false);
         butSuivant.addActionListener(boutonListener);
         butSuivant.setEnabled(false);
         butAjouter.addActionListener(boutonListener);
+        butSupprMembre.addActionListener(boutonListener);
 
-        if(listGroupe.getModel() == null)
-        {
+        if (listGroupe.getModel() == null) {
             butAjouter.setEnabled(false);
         }
     }
@@ -68,9 +70,15 @@ public class GroupeListingPanel extends javax.swing.JPanel {
         return barreInfo;
     }
 
-    public  void actualiserMembres(){
+    public void actualiserMembres() {
         try {
             comboChoixMembre.setModel(new DefaultComboBoxModel(getMembreForCombo(Controller.getGroupeSelected(groupeEnCours))));
+            if (comboChoixMembre.getModel() != null) {
+                butSupprMembre.setEnabled(true);
+            } else {
+                butSupprMembre.setEnabled(false);
+                
+            }
         } catch (BDException ex) {
             setInfoText(ex.toString());
         } catch (LoginException ex) {
@@ -114,7 +122,6 @@ public class GroupeListingPanel extends javax.swing.JPanel {
         labelNationaliteMembreOut = new javax.swing.JLabel();
         labelInstrument = new javax.swing.JLabel();
         labelDomaineOut = new javax.swing.JLabel();
-        butAjouter = new javax.swing.JButton();
         labelDomaine = new javax.swing.JLabel();
         labelInstrumentOut = new javax.swing.JLabel();
         labelDateNaissance = new javax.swing.JLabel();
@@ -123,6 +130,10 @@ public class GroupeListingPanel extends javax.swing.JPanel {
         butPrecedent = new javax.swing.JButton();
         comboChoixMembre = new javax.swing.JComboBox();
         butSuivant = new javax.swing.JButton();
+        actionPanel = new javax.swing.JPanel();
+        butSupprMembre = new javax.swing.JButton();
+        butModifier = new javax.swing.JButton();
+        butAjouter = new javax.swing.JButton();
 
         setBorder(javax.swing.BorderFactory.createTitledBorder("Lister groupes"));
         setLayout(new java.awt.GridBagLayout());
@@ -344,12 +355,6 @@ public class GroupeListingPanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 0);
         membrePanel.add(labelDomaineOut, gridBagConstraints);
 
-        butAjouter.setText("Ajouter");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 4;
-        membrePanel.add(butAjouter, gridBagConstraints);
-
         labelDomaine.setText("Domaine :");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -406,6 +411,21 @@ public class GroupeListingPanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
         membrePanel.add(ChangementPanel, gridBagConstraints);
 
+        butSupprMembre.setText("Supprimer membre");
+        actionPanel.add(butSupprMembre);
+
+        butModifier.setText("Modifier");
+        actionPanel.add(butModifier);
+
+        butAjouter.setText("Ajouter membre");
+        actionPanel.add(butAjouter);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        membrePanel.add(actionPanel, gridBagConstraints);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(membrePanel, gridBagConstraints);
@@ -420,11 +440,16 @@ public class GroupeListingPanel extends javax.swing.JPanel {
         labelSiteOut.setText(groupe.getSiteWeb());
         labelCoutOut.setText(groupe.getCout());
         groupePanel.validate();
-        groupeEnCours = new GroupeID(groupe.getNom(),groupe.getNationalite());
+        groupeEnCours = new GroupeID(groupe.getNom(), groupe.getNationalite());
         //Affichage des infos membres
         comboChoixMembre.setModel(new javax.swing.DefaultComboBoxModel(getMembreForCombo(groupe)));
-        if(!vecMembre.isEmpty())
+        if (!vecMembre.isEmpty()) {
             loadMembre(vecMembre.elementAt(0));
+            butSupprMembre.setEnabled(true);
+        } else {
+            butSupprMembre.setEnabled(false);
+        }
+
 
     }
 
@@ -439,16 +464,22 @@ public class GroupeListingPanel extends javax.swing.JPanel {
         membrePanel.validate();
 
         //Gestion de l'activation des boutons
-        if(vecMembre.indexOf(membre) == 0)
+        if (vecMembre.indexOf(membre) == 0) {
             butPrecedent.setEnabled(false);
-        else
+            
+        } else {
             butPrecedent.setEnabled(true);
 
-        if(vecMembre.indexOf(membre) == (vecMembre.size()-1))
+
+        }
+        if (vecMembre.indexOf(membre) == (vecMembre.size() - 1)) {
             butSuivant.setEnabled(false);
-        else
+            
+        } else {
             butSuivant.setEnabled(true);
 
+            
+        }
     }
 
     private Vector<String> getGroupeForList() {
@@ -456,7 +487,7 @@ public class GroupeListingPanel extends javax.swing.JPanel {
         try {
             this.vecGroupeForList = Controller.getAllGroupeForList();
             for (GroupeID g : vecGroupeForList) {
-                vec.add(g.getNom()+" "+g.getNationalite().substring(0, 3));
+                vec.add(g.getNom() + " [" + g.getNationalite().substring(0, 3) + "]");
             }
 
         } catch (BDException ex) {
@@ -468,19 +499,19 @@ public class GroupeListingPanel extends javax.swing.JPanel {
         }
     }
 
-    private Vector <String> getMembreForCombo(Groupe groupe) {
-         Vector<String> vec = new Vector<String>();
-        try{
-         vecMembre = Controller.getAllMembreGroupe(new GroupeID(groupe.getNom(), groupe.getNationalite()));
+    private Vector<String> getMembreForCombo(Groupe groupe) {
+        Vector<String> vec = new Vector<String>();
+        try {
+            vecMembre = Controller.getAllMembreGroupe(new GroupeID(groupe.getNom(), groupe.getNationalite()));
         } catch (BDException ex) {
             barreInfo.setText(ex.toString());
         } catch (LoginException ex) {
             barreInfo.setText(ex.toString());
         }
-         for(MembreGroupe m : vecMembre) {
-             vec.add(m.getNom()+" "+m.getPrenom());
-         }
-            return vec;
+        for (MembreGroupe m : vecMembre) {
+            vec.add(m.getNom() + " " + m.getPrenom());
+        }
+        return vec;
 
     }
 
@@ -492,15 +523,10 @@ public class GroupeListingPanel extends javax.swing.JPanel {
 
         @Override
         public void valueChanged(ListSelectionEvent e) {
-
             Groupe groupeSelected;
-
             try {
                 groupeSelected = Controller.getGroupeSelected(vecGroupeForList.elementAt(listGroupe.getSelectedIndex()));
-         
                 loadGroupe(groupeSelected);
-
-
             } catch (BDException ex) {
                 barreInfo.setText(ex.toString());
             } catch (LoginException ex) {
@@ -513,43 +539,56 @@ public class GroupeListingPanel extends javax.swing.JPanel {
 
         @Override
         public void itemStateChanged(ItemEvent e) {
-            if(e.getStateChange() == ItemEvent.SELECTED) {
-
-                loadMembre(vecMembre.elementAt(comboChoixMembre.getSelectedIndex()));
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                choixMembre = comboChoixMembre.getSelectedIndex();
+                loadMembre(vecMembre.elementAt(choixMembre));
             }
         }
     }
 
     private class ButtonListener implements ActionListener {
+
         private GroupeListingPanel groupeListing;
 
         public ButtonListener(GroupeListingPanel groupeListing) {
             this.groupeListing = groupeListing;
         }
+
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(e.getSource() == butPrecedent)
-            {
-                loadMembre(vecMembre.elementAt(comboChoixMembre.getSelectedIndex()-1));
-                comboChoixMembre.setSelectedIndex(comboChoixMembre.getSelectedIndex()-1);
-            }
-            else if(e.getSource() == butSuivant)
-            {
-                loadMembre(vecMembre.elementAt(comboChoixMembre.getSelectedIndex()+1));
-                comboChoixMembre.setSelectedIndex(comboChoixMembre.getSelectedIndex()+1);
-            }
-            else if(e.getSource() == butAjouter)
-            {
-               AjouterMembreFrame ajoutMembre = new AjouterMembreFrame(groupeListing, groupeEnCours);
+            if (e.getSource() == butPrecedent) {
+                loadMembre(vecMembre.elementAt(comboChoixMembre.getSelectedIndex() - 1));
+                comboChoixMembre.setSelectedIndex(comboChoixMembre.getSelectedIndex() - 1);
+            } else if (e.getSource() == butSuivant) {
+                loadMembre(vecMembre.elementAt(comboChoixMembre.getSelectedIndex() + 1));
+                comboChoixMembre.setSelectedIndex(comboChoixMembre.getSelectedIndex() + 1);
+            } else if (e.getSource() == butAjouter) {
+                AjouterMembreFrame ajoutMembre = new AjouterMembreFrame(groupeListing, groupeEnCours);
+            } else if (e.getSource() == butSupprMembre) {
+                if (JOptionPane.showConfirmDialog(null,
+                        "<html>Etes-vous sûr de vouloir supprimer " + ((String) comboChoixMembre.getSelectedItem()) + "<html>?<br><br><i>Il vous sera après impossible de le récupérer</i>",
+                        "Attention!",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
+                    try {
+                        Controller.deleteMembreGroupe(vecMembre.elementAt(comboChoixMembre.getSelectedIndex()), groupeEnCours);
+                        actualiserMembres();
+                        setInfoText("Suppression effectuée avec succès");
+                    } catch (BDException ex) {
+                        setInfoText(ex.toString());
+                    }
+                }
             }
         }
-
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel ChangementPanel;
+    private javax.swing.JPanel actionPanel;
     private javax.swing.JButton butAjouter;
+    private javax.swing.JButton butModifier;
     private javax.swing.JButton butPrecedent;
     private javax.swing.JButton butSuivant;
+    private javax.swing.JButton butSupprMembre;
     private javax.swing.JComboBox comboChoixMembre;
     private javax.swing.JPanel groupePanel;
     private javax.swing.JLabel labelCout;
