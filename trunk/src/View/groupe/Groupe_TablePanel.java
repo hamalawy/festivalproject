@@ -27,11 +27,11 @@ public class Groupe_TablePanel extends JPanel{
     private javax.swing.JScrollPane scrollTable;
     private javax.swing.JTable tableMembre;
     private AllMembresTableModel dataModel;
-    private GroupeInscriptionPanel groupePanel;
+    private GroupeInscriptionMainPanel groupePanel;
     private Listener actionListener;
     private ActionTable actionTable;
 
-    public Groupe_TablePanel(GroupeInscriptionPanel groupePanel) {
+    public Groupe_TablePanel(GroupeInscriptionMainPanel groupePanel) {
         this.groupePanel = groupePanel;
         initComponents();
     }
