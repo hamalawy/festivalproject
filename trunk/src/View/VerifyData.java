@@ -38,20 +38,25 @@ public class VerifyData {
                 case '.':
                     if (avecVirgule) {
                         if (i == 0) {
-                            strModif += "0";
-                        } else if (i > 0 && str.charAt(i - 1) != '.') {
+                            strModif += "0.";
+                        } else if (i > 1 && str.charAt(i - 1) != '.') {
                             strModif += ".";
                         }
                     }
                     break;
+                default :
+                    throw new VerifyDataException();
+                   
             }
         }
         }else throw new VerifyDataException();
+       
         return strModif;
     }
 
-    public double getSQLDouble(String str, boolean avecVirgule) throws VerifyDataException
+    private double getSQLDouble(String str, boolean avecVirgule) throws VerifyDataException
     {
+     
         return Double.parseDouble(getSQLDoubleString(str, avecVirgule));
     }
 
@@ -77,16 +82,17 @@ public class VerifyData {
             for (int i = 0; i < str.length(); i++) {
                 switch (str.charAt(i)) {
                     case '\'':
-                        modStr += "\\";
+                        modStr += " ";
                         break;
                 }
-                modStr += str.charAt(i);
+                if(str.charAt(i) != '\'')
+                    modStr += str.charAt(i);
             }
         } else {
             throw new VerifyDataException();
         }
-        modStr = modStr.toLowerCase();
-        return modStr;
+
+        return modStr.toLowerCase();
     }
 
 }
