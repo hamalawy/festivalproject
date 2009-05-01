@@ -2,6 +2,7 @@ package View.stand;
 
 import Data.LoginException;
 import View.VerifyDataException;
+import View.groupe.GroupeNotAcceptedException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
@@ -17,7 +18,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 public class StandInscriptionPanel extends JPanel {
-	
+
     private javax.swing.JPanel actionPanel;
     private javax.swing.JTextArea areaDescription;
     private javax.swing.JButton butReinit;
@@ -33,10 +34,9 @@ public class StandInscriptionPanel extends JPanel {
     private BarreInfo barreInfo;
     private GestionFocusTextField gestionFocusTextField;
 
-	public StandInscriptionPanel(BarreInfo barreInfo)
-	{
+    public StandInscriptionPanel(BarreInfo barreInfo) {
         this.barreInfo = barreInfo;
-		java.awt.GridBagConstraints gridBagConstraints;
+        java.awt.GridBagConstraints gridBagConstraints;
         gestionFocusTextField = new GestionFocusTextField();
 
         labelType = new javax.swing.JLabel();
@@ -61,7 +61,7 @@ public class StandInscriptionPanel extends JPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
         add(labelType, gridBagConstraints);
 
-        comboType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Alimentaire", "Commercial" }));
+        comboType.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"Alimentaire", "Commercial"}));
         comboType.setMinimumSize(new java.awt.Dimension(110, 20));
         comboType.setPreferredSize(new java.awt.Dimension(110, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -101,23 +101,26 @@ public class StandInscriptionPanel extends JPanel {
         areaDescription.setLineWrap(true);
         areaDescription.setRows(5);
         scrollDescription.addFocusListener(new java.awt.event.FocusAdapter() {
+
             @Override
             public void focusLost(java.awt.event.FocusEvent e) {
-			// TODO Auto-generated method stub
-			JScrollPane scroll = (JScrollPane)e.getSource();
-            Color color;
-			if(!verify((areaDescription)))
-				color = new Color(255,0,0,110);
-			else
-				color = new Color(0,255,0,110);
-			scroll.setBorder(javax.swing.BorderFactory.createLineBorder(color));
+                // TODO Auto-generated method stub
+                JScrollPane scroll = (JScrollPane) e.getSource();
+                Color color;
+                if (!verify((areaDescription))) {
+                    color = new Color(255, 0, 0, 110);
+                } else {
+                    color = new Color(0, 255, 0, 110);
+                }
+                scroll.setBorder(javax.swing.BorderFactory.createLineBorder(color));
             }
-            private boolean verify(JTextArea text)
-            {
-                if(text.getText().isEmpty())
+
+            private boolean verify(JTextArea text) {
+                if (text.getText().isEmpty()) {
                     return false;
-                else
+                } else {
                     return true;
+                }
             }
         });
         scrollDescription.setViewportView(areaDescription);
@@ -170,52 +173,44 @@ public class StandInscriptionPanel extends JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(actionPanel, gridBagConstraints);
         setInfoText("Stand");
-		setVisible(true);
-	}
+        setVisible(true);
+    }
 
-	public void reinit() {
-		// TODO Auto-generated method stub
-		this.textNbEmploye.setText(null);
+    public void reinit() {
+        // TODO Auto-generated method stub
+        this.textNbEmploye.setText(null);
         this.textSouscripteur.setText(null);
         this.areaDescription.setText(null);
         this.comboType.setSelectedIndex(0);
-	}
-	
-	public boolean verify()
-	{
-        if(textNbEmploye.getText().isEmpty() ||
-           textNbEmploye.getText().isEmpty() ||
-           textSouscripteur.getText().isEmpty() ||
-           areaDescription.getText().isEmpty())
+    }
+
+    public boolean verify() {
+        if (textNbEmploye.getText().isEmpty() ||
+                textNbEmploye.getText().isEmpty() ||
+                textSouscripteur.getText().isEmpty() ||
+                areaDescription.getText().isEmpty()) {
             return false;
-        else
+        } else {
             return true;
-	}
+        }
+    }
 
-	public void createStand() {
-	
-		try {
+    public void createStand() {
+        try {
             VerifyData v = new VerifyData();
-
             int nbPers = v.getSQLInt(textNbEmploye.getText());
-            Stand newStand = new Stand(new String((String)comboType.getModel().getSelectedItem()),
-								   nbPers,
-								   textSouscripteur.getText(),
-								   areaDescription.getText());
-
-			Controller.createStand(newStand);
-			setInfoText("Ajout du stand effectué avec succès");
+            Stand newStand = new Stand(new String((String) comboType.getModel().getSelectedItem()), nbPers, textSouscripteur.getText(), areaDescription.getText());
+            Controller.createStand(newStand);
+            setInfoText("Ajout du stand effectué avec succès");
             reinit();
-        } catch (LoginException le) {
-            setInfoText(le.toString());
+        } catch (GroupeNotAcceptedException ex) {
+            setInfoText(ex.toString());
         } catch (VerifyDataException ex) {
             setInfoText(ex.toString());
-        } catch (NumberFormatException nbe){
-            setInfoText(nbe.toString());
-        } catch (BDException e) {
-			setInfoText(e.toString());
-		}
-	}
+        }
+
+    }
+
     public void setInfoText(String string) {
         barreInfo.setText(string);
     }
