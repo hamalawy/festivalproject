@@ -23,7 +23,7 @@ import javax.swing.JPanel;
 public class GroupeInscriptionMainPanel extends JPanel {
 
     private GroupeInscrMembrePanel membrePanel;
-    private GroupeInscrGroupePanel groupePanel;
+    private InscrGroupePanel groupePanel;
     private BarreInfo barreInfo;
     private GridBagConstraints gbc;
     private Vector<MembreGroupe> vectMembreGroupe = new Vector<MembreGroupe>();
@@ -40,7 +40,7 @@ public class GroupeInscriptionMainPanel extends JPanel {
         setBorder(BorderFactory.createTitledBorder("Inscription d'un groupe"));
 
         gestionAction = new GestionAction();
-        groupePanel = new GroupeInscrGroupePanel(this);
+        groupePanel = new InscrGroupePanel(this.barreInfo);
 
         //Panel d'action placé en bas de la fenêtre
         butRetour = new javax.swing.JButton();

@@ -83,11 +83,19 @@ public class InscriptionMembreActionPanel extends JPanel{
         public void actionPerformed(ActionEvent e) {
             if(e.getSource() == butAjouter) {
                 panelInscription.getTextNom().requestFocus();
-                panelInscription.actionButAjouter();
+                if(panelInscription.verify())
+                    panelInscription.actionButAjouter();
+                else {
+                    panelInscription.getGroupePanel().getBarreInfo().setText("Veuillez compléter tous les champs");
+                }
             }
             else if(e.getSource() == butAjouterNouveau) {
                 panelInscription.getTextNom().requestFocus();
-                panelInscription.actionButAjouterNouveau();
+                if(panelInscription.verify())
+                    panelInscription.actionButAjouterNouveau();
+                else {
+                    panelInscription.getGroupePanel().getBarreInfo().setText("Veuillez compléter tous les champs");
+                }
             }
             else if(e.getSource() == butAnnuler)
                 panelInscription.getGroupePanel().afficherTableMembre();

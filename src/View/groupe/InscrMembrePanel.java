@@ -12,6 +12,8 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -209,11 +211,12 @@ public class InscrMembrePanel extends JPanel {
         return textNom;
     }
 
-    public MembreGroupe getMembre() throws DateException {
-        if (verify()) {
-            java.sql.Date date = new java.sql.Date(datePanel.getDate().getTimeInMillis());
-
-            MembreGroupe membre = new MembreGroupe(
+    public MembreGroupe getMembre() {
+        MembreGroupe membre=null;
+        java.sql.Date date;
+        try {
+            date = new java.sql.Date(datePanel.getDate().getTimeInMillis());
+            membre = new MembreGroupe(
                     textNom.getText(),
                     textPrenom.getText(),
                     textPseudo.getText(),
@@ -221,11 +224,15 @@ public class InscrMembrePanel extends JPanel {
                     (String) comboDomaine.getModel().getSelectedItem(),
                     (comboInstrument.isEnabled()) ? (String) comboInstrument.getModel().getSelectedItem() : null,
                     date);
+        } catch (DateException ex) {
+            barreInfo.setText("Date incorrecte");
+        } finally {
             return membre;
-        } else {
-            barreInfo.setText("Champ(s) incorrect(s) ou incomplet(s)");
-            return null;
         }
+
+
+            
+        
 
     }
 
@@ -248,11 +255,11 @@ public class InscrMembrePanel extends JPanel {
                 textPrenom.getText().isEmpty() ||
                 textPseudo.getText().isEmpty() ||
                 (comboInstrument.getSelectedItem() == null && comboDomaine.getSelectedIndex() == 1) ||
-                comboNationalite.getSelectedItem() == null) {
+                comboNationalite.getSelectedItem() == null || comboNationalite.getModel() == null ||
+                comboNationalite.getModel().getSelectedItem().equals("")) {
             return false;
-        } else {
-            return true;
-        }
+            
+        } else return true;
     }
 
     public boolean isEmpty() {

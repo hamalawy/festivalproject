@@ -25,6 +25,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -48,6 +49,7 @@ public class GroupeListingPanel extends javax.swing.JPanel {
     public GroupeListingPanel(BarreInfo barreInfo) {
         this.barreInfo = barreInfo;
         listeListener = new ListeGroupeListener();
+
         initComponents();
         listGroupe.addListSelectionListener(listeListener);
         listGroupe.setSelectedIndex(0);
@@ -61,12 +63,23 @@ public class GroupeListingPanel extends javax.swing.JPanel {
         butAjouter.addActionListener(boutonListener);
         butSupprMembre.addActionListener(boutonListener);
         butModifier.addActionListener(boutonListener);
-        
+        butModifierGroupe.addActionListener(boutonListener);
+        butSupprGroupe.addActionListener(boutonListener);
+
 
         //s'il n'y a aucun groupe, on désactive le bouton AjouterMembre
         if (listGroupe.getModel() == null) {
             butAjouter.setEnabled(false);
             butModifierGroupe.setEnabled(false);
+            butSupprGroupe.setEnabled(false);
+        } else {
+            try {
+                loadGroupe(Controller.getGroupeSelected(groupeEnCours));
+            } catch (BDException ex) {
+                setInfoText(ex.toString());
+            } catch (LoginException ex) {
+                setInfoText(ex.toString());
+            }
         }
     }
 
@@ -74,10 +87,10 @@ public class GroupeListingPanel extends javax.swing.JPanel {
         return barreInfo;
     }
 
-    public void actualiserMembres() {
+    public void reloadMembres() {
         try {
             comboChoixMembre.setModel(new DefaultComboBoxModel(getMembreForCombo(Controller.getGroupeSelected(groupeEnCours))));
-            if (comboChoixMembre.getModel() != null && comboChoixMembre.getModel().getSize()>0) {
+            if (comboChoixMembre.getModel() != null && comboChoixMembre.getModel().getSize() > 0) {
                 butSupprMembre.setEnabled(true);
                 butModifier.setEnabled(true);
                 loadMembre(vecMembre.elementAt(0));
@@ -89,6 +102,39 @@ public class GroupeListingPanel extends javax.swing.JPanel {
             setInfoText(ex.toString());
         } catch (LoginException ex) {
             setInfoText(ex.toString());
+        }
+    }
+
+    public void reloadGroupe() {
+        listGroupe.setModel(new javax.swing.AbstractListModel() {
+
+            Vector<String> vec = getGroupeForList();
+
+            @Override
+            public int getSize() {
+                return vec.size();
+            }
+
+            @Override
+            public Object getElementAt(int i) {
+                return vec.elementAt(i);
+            }
+        });
+        if (listGroupe.getModel() != null && listGroupe.getModel().getSize() > 0) {
+            try {
+                listGroupe.setSelectedIndex(0);
+                loadGroupe(Controller.getGroupeSelected(vecGroupeForList.elementAt(listGroupe.getSelectedIndex())));
+                butModifierGroupe.setEnabled(true);
+                butSupprGroupe.setEnabled(true);
+            //bu.setEnabled(true);
+            } catch (BDException ex) {
+                barreInfo.setText(ex.toString());
+            } catch (LoginException ex) {
+                barreInfo.setText(ex.toString());
+            }
+        } else {
+            butModifierGroupe.setEnabled(false);
+            butSupprGroupe.setEnabled(false);
         }
     }
 
@@ -118,7 +164,7 @@ public class GroupeListingPanel extends javax.swing.JPanel {
         labelPopulariteOut = new javax.swing.JLabel();
         labelCoutOut = new javax.swing.JLabel();
         actionGroupePanel = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        butSupprGroupe = new javax.swing.JButton();
         butModifierGroupe = new javax.swing.JButton();
         membrePanel = new javax.swing.JPanel();
         labelNomMembre = new javax.swing.JLabel();
@@ -267,8 +313,8 @@ public class GroupeListingPanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 0);
         groupePanel.add(labelCoutOut, gridBagConstraints);
 
-        jButton1.setText("Supprimer le groupe");
-        actionGroupePanel.add(jButton1);
+        butSupprGroupe.setText("Supprimer le groupe");
+        actionGroupePanel.add(butSupprGroupe);
 
         butModifierGroupe.setText("Modifier");
         actionGroupePanel.add(butModifierGroupe);
@@ -494,8 +540,6 @@ public class GroupeListingPanel extends javax.swing.JPanel {
             butSuivant.setEnabled(false);
         } else {
             butSuivant.setEnabled(true);
-
-
         }
     }
 
@@ -542,8 +586,10 @@ public class GroupeListingPanel extends javax.swing.JPanel {
         public void valueChanged(ListSelectionEvent e) {
             Groupe groupeSelected;
             try {
-                groupeSelected = Controller.getGroupeSelected(vecGroupeForList.elementAt(listGroupe.getSelectedIndex()));
-                loadGroupe(groupeSelected);
+                if (listGroupe.getModel() != null && listGroupe.getSelectedIndex()>=0) {
+                    groupeSelected = Controller.getGroupeSelected(vecGroupeForList.elementAt(listGroupe.getSelectedIndex()));
+                    loadGroupe(groupeSelected);
+                }
             } catch (BDException ex) {
                 barreInfo.setText(ex.toString());
             } catch (LoginException ex) {
@@ -589,16 +635,38 @@ public class GroupeListingPanel extends javax.swing.JPanel {
                         JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
                     try {
                         Controller.deleteMembreGroupe(vecMembre.elementAt(comboChoixMembre.getSelectedIndex()), groupeEnCours);
-                        actualiserMembres();
+                        reloadMembres();
                         setInfoText("Suppression effectuée avec succès");
                     } catch (BDException ex) {
                         setInfoText(ex.toString());
                     }
                 }
             } else if (e.getSource() == butModifier) {
-                System.out.println("Clic");
                 ModifierMembreDialog modifier = new ModifierMembreDialog(groupeListing, groupeEnCours, vecMembre.elementAt(comboChoixMembre.getSelectedIndex()));
+            } else if (e.getSource() == butModifierGroupe) {
+                try {
+                    ModifierGroupeDialog modifier = new ModifierGroupeDialog(groupeListing, Controller.getGroupeSelected(groupeEnCours));
+                } catch (BDException ex) {
+                    setInfoText(ex.toString());
+                } catch (LoginException ex) {
+                    setInfoText(ex.toString());
+                }
+            } else if (e.getSource() == butSupprGroupe) {
+                 if (JOptionPane.showConfirmDialog(null,
+                        "<html>Etes-vous sûr de vouloir supprimer " + ((String)listGroupe.getSelectedValue()) + "<html>?<br><br><i>Il vous sera après impossible de le récupérer</i>",
+                        "Attention!",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
+                    try {
+                        Controller.deleteGroupe(vecGroupeForList.elementAt(listGroupe.getSelectedIndex()));
+                        reloadGroupe();
+                        setInfoText("Suppression effectuée avec succès");
+                    } catch (BDException ex) {
+                        setInfoText(ex.toString());
+                    }
             }
+
+        }
         }
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -610,10 +678,10 @@ public class GroupeListingPanel extends javax.swing.JPanel {
     private javax.swing.JButton butModifierGroupe;
     private javax.swing.JButton butPrecedent;
     private javax.swing.JButton butSuivant;
+    private javax.swing.JButton butSupprGroupe;
     private javax.swing.JButton butSupprMembre;
     private javax.swing.JComboBox comboChoixMembre;
     private javax.swing.JPanel groupePanel;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel labelCout;
     private javax.swing.JLabel labelCoutOut;
     private javax.swing.JLabel labelDanteNaissanceOut;

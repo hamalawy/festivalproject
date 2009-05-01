@@ -76,13 +76,11 @@ public class AjouterMembreDialog extends JDialog {
                     try {
                         Controller.addMembreToGroupe(groupe, membrePanel.getMembre());
                         barreInfo.setText("Ajout du membre effectué");
-                        groupeListingPanel.actualiserMembres();
+                        groupeListingPanel.reloadMembres();
                         dispose();
                     } catch (GroupeNotAcceptedException ex) {
                         barreInfo.setText(ex.toString());
-                    } catch (DateException de) {
-                        barreInfo.setText(de.toString());
-                    }
+                    } 
             } 
 
 
