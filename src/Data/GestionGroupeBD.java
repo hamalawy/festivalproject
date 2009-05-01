@@ -30,33 +30,16 @@ public class GestionGroupeBD {
         try {
             connex = ConnexBD.getInstance();
             Statement stat = connex.createStatement();
-            boolean trouve = false;
             ResultSet result;
 
-            String rechercheInstrument = "SELECT DISTINCT instrument FROM instrument;";
-            result = stat.executeQuery(rechercheInstrument);
-
-            while (result.next() && !trouve) {
-                if (result.getString("instrument").compareTo(m.getInstrument()) == 0) {
-                    trouve = true;
-                }
-            }
-            if (!trouve) {
-                String ajoutInstrument = "INSERT INTO instrument VALUES ('" + v.getSQLString(m.getInstrument()) + "');";
-                int nbLigneAjoutInstru = stat.executeUpdate(ajoutInstrument);
-            }
-
             stat = connex.createStatement();
-            ajout = "INSERT INTO membre_groupe VALUES " +
+            ajout = "INSERT INTO membre_groupe( Nom, Prenom, Pseudo, Nationalite, Domaine, DateNaiss, FKNomGroupe, FKNationaliteGroupe, Instrument ) VALUES " +
                     "('" + v.getSQLString(m.getNom()) + "','" + v.getSQLString(m.getPrenom()) + "','" + v.getSQLString(m.getSurnom()) + "','" + v.getSQLString(m.getNationalite()) +
                     "','" + m.getDomaine() + "',#" + m.getDateNaiss().toString() + "#,'" + v.getSQLString(groupe.getNom()) + "','" + v.getSQLString(groupe.getNationalite()) +
-                    "','" + v.getSQLString(m.getInstrument()) + "');";
+                    "','" + ((m.getInstrument()!=null)?v.getSQLString(m.getInstrument()):"") + "');";
             stat.executeUpdate(ajout);
 
-            String ajoutLienInstrument = "INSERT INTO instrument_membre VALUES (" + "'" + v.getSQLString(m.getNom()) + "','" + v.getSQLString(m.getPrenom()) + "','" + v.getSQLString(m.getInstrument()) + "');";
-            stat.executeUpdate(ajoutLienInstrument);
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
             throw new BDException(e);
         } catch (VerifyDataException e) {
             throw new GroupeNotAcceptedException(e);
@@ -72,7 +55,7 @@ public class GestionGroupeBD {
             Statement stat = connex.createStatement();
             String cout = v.getSQLDoubleString(newGroupe.getCout(), true);
             if (newGroupe.getSiteWeb().isEmpty()) {
-                ajout = "INSERT INTO groupe (Nom, Nationalite, GenreMusical, Cout, Popularite) VALUES " + "('" + v.getSQLString(newGroupe.getNom()) + "','" + v.getSQLString(newGroupe.getNationalite()) + "','" + v.getSQLString(newGroupe.getGenre()) + "','" +cout + "','" + newGroupe.getPopularite() + "');";
+                ajout = "INSERT INTO groupe (Nom, Nationalite, GenreMusical, Cout, Popularite) VALUES " + "('" + v.getSQLString(newGroupe.getNom()) + "','" + v.getSQLString(newGroupe.getNationalite()) + "','" + v.getSQLString(newGroupe.getGenre()) + "','" + cout + "','" + newGroupe.getPopularite() + "');";
             } else {
                 ajout = "INSERT INTO groupe (Nom, Nationalite, GenreMusical, Cout, Popularite, SiteWeb) VALUES " + "('" + v.getSQLString(newGroupe.getNom()) + "','" + v.getSQLString(newGroupe.getNationalite()) + "','" + v.getSQLString(newGroupe.getGenre()) + "','" + cout + "','" + newGroupe.getPopularite() + "','" + v.getSQLString(newGroupe.getSiteWeb()) + "');";
             }
@@ -82,39 +65,24 @@ public class GestionGroupeBD {
 
             if (newGroupe.getVecMembres() != null) {
                 for (MembreGroupe m : newGroupe.getVecMembres()) {
-                    boolean trouve = false;
+
                     stat = connex.createStatement();
                     ResultSet result;
 
-                    String rechercheInstrument = "SELECT DISTINCT instrument FROM instrument;";
-                    result = stat.executeQuery(rechercheInstrument);
-
-                    while (result.next() && !trouve) {
-                        if (result.getString("instrument").compareTo(m.getInstrument()) == 0) {
-                            trouve = true;
-                        }
-                    }
-                    if (!trouve) {
-                        String ajoutInstrument = "INSERT INTO instrument VALUES ('" + v.getSQLString(m.getInstrument()) + "');";
-                        int nbLigneAjoutInstru = stat.executeUpdate(ajoutInstrument);
-                    }
 
                     stat = connex.createStatement();
-                    ajout = "INSERT INTO membre_groupe VALUES " +
+                    ajout = "INSERT INTO membre_groupe ( Nom, Prenom, Pseudo, Nationalite, Domaine, DateNaiss, FKNomGroupe, FKNationaliteGroupe, Instrument ) VALUES " +
                             "('" + v.getSQLString(m.getNom()) + "','" + v.getSQLString(m.getPrenom()) + "','" + v.getSQLString(m.getSurnom()) + "','" + v.getSQLString(m.getNationalite()) +
                             "','" + m.getDomaine() + "',#" + m.getDateNaiss().toString() + "#,'" + v.getSQLString(newGroupe.getNom()) + "','" + v.getSQLString(newGroupe.getNationalite()) +
-                            "','" + v.getSQLString(m.getInstrument()) + "');";
+                            "','" + ((m.getInstrument()!=null)?v.getSQLString(m.getInstrument()):"") + "');";
                     stat.executeUpdate(ajout);
-
-                    String ajoutLienInstrument = "INSERT INTO instrument_membre VALUES (" + "'" + v.getSQLString(m.getNom()) + "','" + v.getSQLString(m.getPrenom()) + "','" + v.getSQLString(m.getInstrument()) + "');";
-                    stat.executeUpdate(ajoutLienInstrument);
-
                 }
             }
 
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            System.out.println(ajout);
             throw new BDException(e);
         } catch (VerifyDataException e) {
             throw new GroupeNotAcceptedException(e);
@@ -148,20 +116,18 @@ public class GestionGroupeBD {
 
     }
 
-    public void deleteMembreGroupe(MembreGroupe membre) throws BDException, GroupeNotAcceptedException {
-        VerifyData v = new VerifyData();
+    public void deleteMembreGroupe(MembreGroupe membre, GroupeID groupe) throws BDException {
         try {
             Connection connex;
             Statement stat;
-            String supprMembre = "DELETE FROM Membre_groupe WHERE Membre_groupe.Nom = " + v.getSQLString(membre.getNom()) + " AND Membre_groupe.Prenom = " + v.getSQLString(membre.getPrenom()) + ");";
+            String supprMembre = "DELETE * FROM membre_groupe WHERE membre_groupe.Nom = '" + membre.getNom() + "' AND membre_groupe.Prenom = '" + membre.getPrenom() + "' AND membre_groupe.FKNomGroupe = '" + groupe.getNom() + "' AND membre_groupe.FKNationaliteGroupe = '" + groupe.getNationalite() + "';";
             connex = ConnexBD.getInstance();
             stat = connex.createStatement();
             int nbLignesSuppr = stat.executeUpdate(supprMembre);
 
         } catch (SQLException ex) {
-            throw new BDException(ex);
-        } catch (VerifyDataException ex) {
-            throw new GroupeNotAcceptedException(ex);
+            System.out.println(ex.getMessage());
+            throw new BDException(new SuppressionException(ex));
         } catch (LoginException ex) {
             throw new BDException(ex);
         }
@@ -220,7 +186,7 @@ public class GestionGroupeBD {
         try {
             connex = ConnexBD.getInstance();
             stat = connex.createStatement();
-            String req = "SELECT DISTINCT Instrument FROM instrument;";
+            String req = "SELECT DISTINCT Instrument FROM membre_groupe;";
             result = stat.executeQuery(req);
             while (result.next()) {
                 vect.add(result.getString("Instrument"));
@@ -250,7 +216,6 @@ public class GestionGroupeBD {
 
 
             result = stat.executeQuery(ajout);
-            System.out.println(result);
             while (result.next()) {
                 MembreGroupe temp = new MembreGroupe(
                         result.getString("Nom"),
@@ -290,7 +255,6 @@ public class GestionGroupeBD {
             }
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
             throw new BDException(e);
 
         } finally {
@@ -319,7 +283,6 @@ public class GestionGroupeBD {
                 groupe.setCout(result.getString("Cout"));
                 groupe.setPopularite(result.getString("Popularite"));
                 groupe.setSiteWeb(result.getString("SiteWeb"));
-                System.out.println(groupe.getGenre());
             }
         } catch (SQLException ex) {
             throw new BDException(ex);
@@ -344,11 +307,37 @@ public class GestionGroupeBD {
                 vec.add(result.getString("Nom") + " " + result.getString("Prenom"));
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
             throw new BDException(e);
 
         } finally {
             return vec;
+        }
+    }
+
+    public void updateMembreGroupe(GroupeID groupe, MembreGroupe ancMembre, MembreGroupe newMembre) throws BDException, GroupeNotAcceptedException, LoginException {
+        try {
+            Connection connex;
+            Statement stat;
+            VerifyData v = new VerifyData();
+
+            String modifMembre = "UPDATE membre_groupe SET membre_groupe.Nom = '" + v.getSQLString(newMembre.getNom())
+                    + "' , membre_groupe.Prenom = '" + v.getSQLString(newMembre.getPrenom()) + "' , membre_groupe.Pseudo = '"
+                    + v.getSQLString(newMembre.getSurnom()) + "' , membre_groupe.Domaine = '" + newMembre.getDomaine()
+                    + "' , membre_groupe.Instrument = '" + ((newMembre.getInstrument()!=null)?v.getSQLString(newMembre.getInstrument()):"") + "' , membre_groupe.DateNaiss = #"
+                    + newMembre.getDateNaiss() + "# , membre_groupe.Nationalite = '" + v.getSQLString(newMembre.getNationalite())
+                    + "' WHERE membre_groupe.Nom = '" + ancMembre.getNom() + "' AND membre_groupe.Prenom = '" + ancMembre.getPrenom()
+                    + "' AND membre_groupe.FKNomGroupe = '" + groupe.getNom() + "' AND membre_groupe.FKNationaliteGroupe = '"
+                    + groupe.getNationalite() + "';";
+            connex = ConnexBD.getInstance();
+            stat = connex.createStatement();
+            System.out.println(modifMembre);
+            int nbLignesSuppr = stat.executeUpdate(modifMembre);
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            throw new BDException(e);
+        } catch (VerifyDataException e) {
+            throw new GroupeNotAcceptedException(e);
         }
     }
 }
