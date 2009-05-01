@@ -178,6 +178,7 @@ public class BarreMenu extends JMenuBar {
             }
             if (e.getSource() == scene_enregCarac) //frame.afficherPanel(
             {
+                frame.afficherPanel(new View.scene.SceneInscriptionJPanel(frame));
             }
             if (e.getSource() == scene_horaireConcerts) //frame.afficherPanel(
             {
