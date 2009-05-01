@@ -97,22 +97,24 @@ public class GroupeInscrMembrePanel extends InscrMembrePanel {
     }
 
     void actionButAjouterNouveau() {
-        try {
-            MembreGroupe newMembre = this.getMembre();
-            groupePanel.getVectMembreGroupe().add(newMembre);
-            groupePanel.afficherAjoutMembre();
-        } catch (DateException ex) {
-            groupePanel.setInfoText("Date incorrecte");
+        MembreGroupe newMembre = this.getMembre();
+        if (newMembre != null) {
+        groupePanel.getVectMembreGroupe().add(newMembre);
+        groupePanel.afficherAjoutMembre();
+        } else {
+            barreInfo.setText("Membre incorrect, veuillez recommencer");
+
         }
     }
 
     public void actionButAjouter() {
-        try {
-            MembreGroupe newMembre = this.getMembre();
+        MembreGroupe newMembre = this.getMembre();
+        if (newMembre != null) {
             groupePanel.getVectMembreGroupe().add(newMembre);
             groupePanel.afficherTableMembre();
-        } catch (DateException ex) {
-            groupePanel.setInfoText("Date incorrecte");
+        } else {
+            barreInfo.setText("Membre incorrect, veuillez recommencer");
+            
         }
     }
 

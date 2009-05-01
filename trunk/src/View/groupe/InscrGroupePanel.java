@@ -4,6 +4,7 @@ import Controller.Controller;
 import Data.BDException;
 import Data.Groupe;
 import Data.LoginException;
+import View.BarreInfo;
 import View.GestionFocusTextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,7 +12,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class GroupeInscrGroupePanel extends JPanel {
+public class InscrGroupePanel extends JPanel {
 
     private javax.swing.JPanel ActionPanel;
     private javax.swing.JButton butReinit;
@@ -31,9 +32,10 @@ public class GroupeInscrGroupePanel extends JPanel {
     private GestionFocusTextField gestionFocus;
     private GestionAction gestionAction;
     private GroupeInscriptionMainPanel groupePanel;
+    private BarreInfo barreInfo;
 
-    public GroupeInscrGroupePanel(GroupeInscriptionMainPanel groupePanel) {
-        this.groupePanel = groupePanel;
+    public InscrGroupePanel(BarreInfo barreInfo) {
+        this.barreInfo = barreInfo;
         setBorder(javax.swing.BorderFactory.createTitledBorder("Groupe"));
 
         gestionFocus = new GestionFocusTextField();
@@ -84,9 +86,9 @@ public class GroupeInscrGroupePanel extends JPanel {
         try {
             comboNationalite.setModel(new javax.swing.DefaultComboBoxModel(Controller.getAllGroupeNationalite()));
         } catch (BDException ex) {
-            groupePanel.setInfoText(ex.toString());
+            barreInfo.setText(ex.toString());
         } catch (LoginException le) {
-            groupePanel.setInfoText(le.toString());
+            barreInfo.setText(le.toString());
         }
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -107,9 +109,9 @@ public class GroupeInscrGroupePanel extends JPanel {
         try {
             comboGenre.setModel(new javax.swing.DefaultComboBoxModel(Controller.getAllGenre()));
         } catch (BDException ex) {
-            groupePanel.setInfoText(ex.toString());
+            barreInfo.setText(ex.toString());
         } catch (LoginException le) {
-            groupePanel.setInfoText(le.toString());
+            barreInfo.setText(le.toString());
         }
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 1;
@@ -203,6 +205,15 @@ public class GroupeInscrGroupePanel extends JPanel {
         } else {
             return false;
         }
+    }
+
+    public void setToModify(Groupe groupe) {
+        textCout.setText(groupe.getCout());
+        textNomGroupe.setText(groupe.getNom());
+        textSiteWeb.setText(groupe.getSiteWeb());
+        comboGenre.setSelectedItem(groupe.getGenre());
+        comboNationalite.setSelectedItem(groupe.getNationalite());
+        comboPopularite.setSelectedItem(groupe.getPopularite());
     }
 
     public Groupe getGroupe() throws GroupeNotAcceptedException {
