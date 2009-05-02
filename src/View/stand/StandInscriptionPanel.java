@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 
 import Controller.Controller;
 import Data.BDException;
-import Data.Stand;
+import Business.Stand;
 import View.BarreInfo;
 import View.GestionFocusTextField;
 import View.VerifyData;
@@ -203,7 +203,7 @@ public class StandInscriptionPanel extends JPanel {
             Controller.createStand(newStand);
             setInfoText("Ajout du stand effectué avec succès");
             reinit();
-        } catch (GroupeNotAcceptedException ex) {
+        } catch (BDException ex) {
             setInfoText(ex.toString());
         } catch (VerifyDataException ex) {
             setInfoText(ex.toString());
