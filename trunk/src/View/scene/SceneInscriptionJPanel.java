@@ -7,7 +7,7 @@ package View.scene;
 
 import Controller.Controller;
 import Data.BDException;
-import Data.Scene;
+import Business.Scene;
 import View.MainFrame;
 import View.VerifyData;
 import View.VerifyDataException;
