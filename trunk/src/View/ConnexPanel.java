@@ -8,9 +8,9 @@
  *
  * Created on 12-avr.-2009, 17:45:18
  */
-
 package View;
 
+import Controller.Controller;
 import Data.BDException;
 import Data.ConnexBD;
 import Data.LoginException;
@@ -24,7 +24,9 @@ import javax.swing.JTextField;
  * @author Cramike
  */
 public class ConnexPanel extends javax.swing.JPanel {
+
     private MainFrame mainFrame;
+
     /** Creates new form ConnexPanel */
     public ConnexPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -43,7 +45,7 @@ public class ConnexPanel extends javax.swing.JPanel {
 
         labelConnex = new javax.swing.JLabel();
         labelDBName = new javax.swing.JLabel();
-        textDBName = new javax.swing.JTextField();
+        textUsername = new javax.swing.JTextField();
         labelPass = new javax.swing.JLabel();
         password = new javax.swing.JPasswordField();
         actionPanel = new javax.swing.JPanel();
@@ -63,7 +65,7 @@ public class ConnexPanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 20, 0);
         add(labelConnex, gridBagConstraints);
 
-        labelDBName.setText("Base de données :");
+        labelDBName.setText("Nom d'utilisateur :");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -71,17 +73,17 @@ public class ConnexPanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 0);
         add(labelDBName, gridBagConstraints);
 
-        textDBName.setText("festival");
-        textDBName.setMinimumSize(new java.awt.Dimension(110, 20));
-        textDBName.setPreferredSize(new java.awt.Dimension(110, 20));
+        textUsername.setText("Cramike");
+        textUsername.setMinimumSize(new java.awt.Dimension(110, 20));
+        textUsername.setPreferredSize(new java.awt.Dimension(110, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 10);
-        add(textDBName, gridBagConstraints);
+        add(textUsername, gridBagConstraints);
 
-        labelPass.setText("Password :");
+        labelPass.setText("Mot de passe :");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -89,7 +91,7 @@ public class ConnexPanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 5, 0);
         add(labelPass, gridBagConstraints);
 
-        password.setText("osiris");
+        password.setText("Osiris");
         password.setMinimumSize(new java.awt.Dimension(110, 20));
         password.setPreferredSize(new java.awt.Dimension(110, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -129,17 +131,15 @@ public class ConnexPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_butQuitterActionPerformed
 
     private void butConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butConnectActionPerformed
-        if(new String(password.getPassword()) != null && textDBName.getText() != null)
-        {
+        if (!(new String(password.getPassword()).isEmpty()) && !(textUsername.getText()).isEmpty()) {
             try {
-                Connection connex = ConnexBD.getInstance(this.textDBName.getText(), new String(this.password.getPassword()));
-                mainFrame.afficherPanel(new BienvenuePanel());
-                mainFrame.getJMenuBar().setVisible(true);
+                if (Controller.connectUser(textUsername.getText(), new String(password.getPassword()))) {
+                    mainFrame.afficherPanel(new BienvenuePanel());
+                    mainFrame.getJMenuBar().setVisible(true);
+                }
             } catch (BDException ex) {
-                JOptionPane.showMessageDialog(null,"La connexion n'a pas pu s'établir, veuillez recommencer\nSi le problème persiste, veuillez contacter un adiministrateur", "Erreur", JOptionPane.ERROR_MESSAGE);
-            } catch (LoginException ex) {
-                JOptionPane.showMessageDialog(null,"Mauvais nom de base de données ou mot de passe, veuillez recommencer","Erreur" , JOptionPane.ERROR_MESSAGE);
-            }
+                JOptionPane.showMessageDialog(null, "<html>La connexion n'a pas pu s'établir, veuillez recommencer<br><br><i>Si le problème persiste, veuillez contacter un adiministrateur</i>", "Erreur", JOptionPane.ERROR_MESSAGE);
+            } 
         }
     }
 
@@ -148,10 +148,8 @@ public class ConnexPanel extends javax.swing.JPanel {
     }
 
     public JTextField getTextDBName() {
-        return textDBName;
+        return textUsername;
     }//GEN-LAST:event_butConnectActionPerformed
-
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel actionPanel;
     private javax.swing.JButton butConnect;
@@ -160,7 +158,6 @@ public class ConnexPanel extends javax.swing.JPanel {
     private javax.swing.JLabel labelDBName;
     private javax.swing.JLabel labelPass;
     private javax.swing.JPasswordField password;
-    private javax.swing.JTextField textDBName;
+    private javax.swing.JTextField textUsername;
     // End of variables declaration//GEN-END:variables
-
 }

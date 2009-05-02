@@ -32,7 +32,7 @@ public class MainFrame extends JFrame{
 		this.setLayout(new BorderLayout());
 
         //Taille
-        frameSize = new Dimension(700, 500);
+        frameSize = new Dimension(800, 600);
         this.setSize(frameSize);
         screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
