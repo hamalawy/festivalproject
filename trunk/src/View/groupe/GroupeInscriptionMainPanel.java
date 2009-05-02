@@ -2,9 +2,9 @@ package View.groupe;
 
 import Controller.Controller;
 import Data.BDException;
-import Data.Groupe;
+import Business.Groupe;
 import Data.LoginException;
-import Data.MembreGroupe;
+import Business.MembreGroupe;
 import View.BarreInfo;
 
 import View.BienvenuePanel;
@@ -93,8 +93,8 @@ public class GroupeInscriptionMainPanel extends JPanel {
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         add(mainAction, gbc);
 
-
         isTableDisplayed = false;
+
         this.validate();
     }
 

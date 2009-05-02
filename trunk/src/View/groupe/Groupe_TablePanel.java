@@ -3,7 +3,7 @@ package View.groupe;
 
 import Business.AllMembresTableModel;
 import Controller.Controller;
-import Data.MembreGroupe;
+import Business.MembreGroupe;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;

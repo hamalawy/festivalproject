@@ -11,12 +11,20 @@
 
 package View.groupe;
 
+import Controller.Controller;
+import Data.BDException;
+import Data.CriteresRecherche;
+import Data.LoginException;
 import View.BienvenuePanel;
 import View.MainFrame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultComboBoxModel;
 
 /**
  *
@@ -36,19 +44,18 @@ public class RechMembrePanel extends javax.swing.JPanel {
         checkNomGroupe.addItemListener(gestionCheck);
         checkNomMembre.addItemListener(gestionCheck);
         checkPrenomMembre.addItemListener(gestionCheck);
-        checkPseudoMembre.addItemListener(gestionCheck);
+        checkInstrumentMembre.addItemListener(gestionCheck);
 
         butRechercher.addActionListener(new GestionButton());
-
     }
 
     public CriteresRecherche getCriteres() {
         CriteresRecherche c = new CriteresRecherche();
-        if(!checkNationaliteGroupe.isEnabled()) {
-            c.setNationaliteGroupe(null);
-        } else
-            c.setNationaliteGroupe(textNationaliteGroupe.getText());
-        if(!checkNomGroupe.isEnabled()) {
+        if(!comboNationaliteGroupe.isEnabled()) {
+            c.setNationaliteGroupe("");
+        } else{
+            c.setNationaliteGroupe((String)comboNationaliteGroupe.getSelectedItem());
+        }if(!checkNomGroupe.isEnabled()) {
             c.setNomGroupe(null);
         } else
             c.setNomGroupe(textNomGroupe.getText());
@@ -60,13 +67,37 @@ public class RechMembrePanel extends javax.swing.JPanel {
             c.setPrenomMembre(null);
         } else
             c.setPrenomMembre(textPrenomMembre.getText());
-        if(!checkPseudoMembre.isEnabled()) {
-            c.setPseudoMembre(null);
+        if(!checkInstrumentMembre.isEnabled()) {
+            c.setInstrument(null);
         } else
-            c.setPseudoMembre(textPseudoMembre.getText());
+            c.setInstrument((String)comboInstrument.getSelectedItem());
 
         return c;
     }
+
+    private Vector<String> getAllGroupeNationalite() {
+        Vector<String> vec = null;
+        try {
+            vec = Controller.getAllGroupeNationalite();
+        } catch (BDException ex) {
+            mainFrame.getBarreInfo().setText(ex.toString());
+        } finally {
+            return vec;
+        }
+    }
+
+    private Vector<String> getAllInstruments() {
+        Vector <String> vec = null;
+        try {
+            vec = Controller.getAllInstruments();
+        } catch (BDException ex) {
+            mainFrame.getBarreInfo().setText(ex.toString());
+        } finally {
+            return vec;
+        }
+    }
+
+
 
     private class GestionButton implements ActionListener {
 
@@ -93,10 +124,9 @@ public class RechMembrePanel extends javax.swing.JPanel {
                 }
             } else if (e.getSource() == checkNationaliteGroupe) {
                 if(e.getStateChange() == ItemEvent.SELECTED) {
-                    textNationaliteGroupe.setEditable(true);
+                    comboNationaliteGroupe.setEnabled(true);
                 } else {
-                    textNationaliteGroupe.setEditable(false);
-                    textNationaliteGroupe.setText("");
+                    comboNationaliteGroupe.setEnabled(false);
                 }
             } else if (e.getSource() == checkNomMembre) {
                 if(e.getStateChange() == ItemEvent.SELECTED) {
@@ -112,12 +142,11 @@ public class RechMembrePanel extends javax.swing.JPanel {
                     textPrenomMembre.setEditable(false);
                     textPrenomMembre.setText("");
                 }
-            } else if (e.getSource() == checkPseudoMembre) {
+            } else if (e.getSource() == checkInstrumentMembre) {
                 if(e.getStateChange() == ItemEvent.SELECTED) {
-                    textPseudoMembre.setEditable(true);
+                    comboInstrument.setEnabled(true);
                 } else {
-                    textPseudoMembre.setEditable(false);
-                    textPseudoMembre.setText("");
+                    comboInstrument.setEnabled(false);
                 }
             }
         }
@@ -139,11 +168,9 @@ public class RechMembrePanel extends javax.swing.JPanel {
         checkNationaliteGroupe = new javax.swing.JCheckBox();
         checkPrenomMembre = new javax.swing.JCheckBox();
         checkNomMembre = new javax.swing.JCheckBox();
-        checkPseudoMembre = new javax.swing.JCheckBox();
+        checkInstrumentMembre = new javax.swing.JCheckBox();
         rechPanel = new javax.swing.JPanel();
         textNomGroupe = new javax.swing.JTextField();
-        textPseudoMembre = new javax.swing.JTextField();
-        textNationaliteGroupe = new javax.swing.JTextField();
         textPrenomMembre = new javax.swing.JTextField();
         textNomMembre = new javax.swing.JTextField();
         labelNomGroupe = new javax.swing.JLabel();
@@ -152,6 +179,8 @@ public class RechMembrePanel extends javax.swing.JPanel {
         labelPseudoMembre = new javax.swing.JLabel();
         labelNomMembre = new javax.swing.JLabel();
         butRechercher = new javax.swing.JButton();
+        comboNationaliteGroupe = new javax.swing.JComboBox();
+        comboInstrument = new javax.swing.JComboBox();
         resultSearchMembrePanel = new View.groupe.ResultSearchMembrePanel();
         butRetour = new javax.swing.JButton();
 
@@ -185,9 +214,9 @@ public class RechMembrePanel extends javax.swing.JPanel {
         });
         criteresPanel.add(checkNomMembre);
 
-        checkPseudoMembre.setSelected(true);
-        checkPseudoMembre.setText("Pseudo du membre");
-        criteresPanel.add(checkPseudoMembre);
+        checkInstrumentMembre.setSelected(true);
+        checkInstrumentMembre.setText("Instrument");
+        criteresPanel.add(checkInstrumentMembre);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
@@ -205,26 +234,8 @@ public class RechMembrePanel extends javax.swing.JPanel {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 2, 10, 11);
+        gridBagConstraints.insets = new java.awt.Insets(0, 2, 10, 10);
         rechPanel.add(textNomGroupe, gridBagConstraints);
-
-        textPseudoMembre.setMinimumSize(new java.awt.Dimension(110, 20));
-        textPseudoMembre.setPreferredSize(new java.awt.Dimension(110, 20));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 2, 5, 11);
-        rechPanel.add(textPseudoMembre, gridBagConstraints);
-
-        textNationaliteGroupe.setMinimumSize(new java.awt.Dimension(110, 20));
-        textNationaliteGroupe.setPreferredSize(new java.awt.Dimension(110, 20));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 11);
-        rechPanel.add(textNationaliteGroupe, gridBagConstraints);
 
         textPrenomMembre.setMinimumSize(new java.awt.Dimension(110, 20));
         textPrenomMembre.setPreferredSize(new java.awt.Dimension(110, 20));
@@ -232,7 +243,7 @@ public class RechMembrePanel extends javax.swing.JPanel {
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 11);
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 10);
         rechPanel.add(textPrenomMembre, gridBagConstraints);
 
         textNomMembre.setMinimumSize(new java.awt.Dimension(110, 20));
@@ -247,22 +258,22 @@ public class RechMembrePanel extends javax.swing.JPanel {
         labelNomGroupe.setText("Nom du groupe");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-        gridBagConstraints.insets = new java.awt.Insets(0, 2, 0, 11);
+        gridBagConstraints.insets = new java.awt.Insets(0, 2, 0, 10);
         rechPanel.add(labelNomGroupe, gridBagConstraints);
 
         labelNationaliteGroupe.setText("Nationalité du groupe");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 11);
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 10);
         rechPanel.add(labelNationaliteGroupe, gridBagConstraints);
 
         labelPrenomMembre.setText("Prénom du membre");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 11);
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 10);
         rechPanel.add(labelPrenomMembre, gridBagConstraints);
 
-        labelPseudoMembre.setText("Pseudo du membre");
+        labelPseudoMembre.setText("Instrument");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -283,6 +294,26 @@ public class RechMembrePanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 10);
         rechPanel.add(butRechercher, gridBagConstraints);
+
+        comboNationaliteGroupe.setModel(new DefaultComboBoxModel(getAllGroupeNationalite()));
+        comboNationaliteGroupe.setMinimumSize(new java.awt.Dimension(110, 20));
+        comboNationaliteGroupe.setPreferredSize(new java.awt.Dimension(110, 20));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 10);
+        rechPanel.add(comboNationaliteGroupe, gridBagConstraints);
+
+        comboInstrument.setModel(new DefaultComboBoxModel(getAllInstruments()));
+        comboInstrument.setMinimumSize(new java.awt.Dimension(110, 20));
+        comboInstrument.setPreferredSize(new java.awt.Dimension(110, 20));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 2, 5, 10);
+        rechPanel.add(comboInstrument, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -329,11 +360,13 @@ public class RechMembrePanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton butRechercher;
     private javax.swing.JButton butRetour;
+    private javax.swing.JCheckBox checkInstrumentMembre;
     private javax.swing.JCheckBox checkNationaliteGroupe;
     private javax.swing.JCheckBox checkNomGroupe;
     private javax.swing.JCheckBox checkNomMembre;
     private javax.swing.JCheckBox checkPrenomMembre;
-    private javax.swing.JCheckBox checkPseudoMembre;
+    private javax.swing.JComboBox comboInstrument;
+    private javax.swing.JComboBox comboNationaliteGroupe;
     private javax.swing.JPanel criteresPanel;
     private javax.swing.JLabel labelNationaliteGroupe;
     private javax.swing.JLabel labelNomGroupe;
@@ -342,11 +375,9 @@ public class RechMembrePanel extends javax.swing.JPanel {
     private javax.swing.JLabel labelPseudoMembre;
     private javax.swing.JPanel rechPanel;
     private View.groupe.ResultSearchMembrePanel resultSearchMembrePanel;
-    private javax.swing.JTextField textNationaliteGroupe;
     private javax.swing.JTextField textNomGroupe;
     private javax.swing.JTextField textNomMembre;
     private javax.swing.JTextField textPrenomMembre;
-    private javax.swing.JTextField textPseudoMembre;
     // End of variables declaration//GEN-END:variables
 
 }

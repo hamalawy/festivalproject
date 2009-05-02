@@ -12,10 +12,10 @@ package View.groupe;
 
 import Controller.Controller;
 import Data.BDException;
-import Data.Groupe;
-import Data.GroupeID;
+import Business.Groupe;
+import Business.GroupeID;
 import Data.LoginException;
-import Data.MembreGroupe;
+import Business.MembreGroupe;
 import View.BarreInfo;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

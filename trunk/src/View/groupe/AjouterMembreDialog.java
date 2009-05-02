@@ -1,7 +1,7 @@
 package View.groupe;
 
 import Controller.Controller;
-import Data.GroupeID;
+import Business.GroupeID;
 import View.BarreInfo;
 import View.DateException;
 import java.awt.FlowLayout;

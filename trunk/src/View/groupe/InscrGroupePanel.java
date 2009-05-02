@@ -2,13 +2,14 @@ package View.groupe;
 
 import Controller.Controller;
 import Data.BDException;
-import Data.Groupe;
+import Business.Groupe;
 import Data.LoginException;
 import View.BarreInfo;
 import View.GestionFocusTextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -87,9 +88,7 @@ public class InscrGroupePanel extends JPanel {
             comboNationalite.setModel(new javax.swing.DefaultComboBoxModel(Controller.getAllGroupeNationalite()));
         } catch (BDException ex) {
             barreInfo.setText(ex.toString());
-        } catch (LoginException le) {
-            barreInfo.setText(le.toString());
-        }
+        } 
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LAST_LINE_START;
@@ -110,9 +109,7 @@ public class InscrGroupePanel extends JPanel {
             comboGenre.setModel(new javax.swing.DefaultComboBoxModel(Controller.getAllGenre()));
         } catch (BDException ex) {
             barreInfo.setText(ex.toString());
-        } catch (LoginException le) {
-            barreInfo.setText(le.toString());
-        }
+        } 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
@@ -184,6 +181,10 @@ public class InscrGroupePanel extends JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 5);
         add(comboPopularite, gridBagConstraints);
+    }
+
+    public JComboBox getComboNationalite() {
+        return comboNationalite;
     }
 
     private boolean verify() {

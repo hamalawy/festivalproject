@@ -11,6 +11,7 @@
 
 package View.groupe;
 
+import Data.CriteresRecherche;
 import Business.AllResultMembreTableModel;
 import Business.MembreGroupeAgrandi;
 import Controller.Controller;
@@ -37,13 +38,12 @@ public class ResultSearchMembrePanel extends javax.swing.JPanel {
         Vector <MembreGroupeAgrandi> vec;
         try {
             vec = Controller.getAllResultMembre(c);
-            if(vec.isEmpty())
-                System.out.println("Vide");
+
             model = new AllResultMembreTableModel(vec);
             table.setModel(model);
             table.validate();
         } catch (BDException ex) {
-            System.out.println(ex.getMessage());
+            System.out.println(ex.toString());
         }
 
         

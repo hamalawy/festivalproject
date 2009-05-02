@@ -1,7 +1,7 @@
 package View.groupe;
 
 import Controller.Controller;
-import Data.Groupe;
+import Business.Groupe;
 import View.BarreInfo;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
