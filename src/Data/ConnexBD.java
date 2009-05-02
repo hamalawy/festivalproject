@@ -1,33 +1,40 @@
 package Data;
 
-import View.ConnexPanel;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-
+import java.util.Vector;
 
 public class ConnexBD {
-    private static String nomDB, pass;
+
+    private static String nomDB,  pass;
     private static Connection uniqueInstance;
 
-
-    public static Connection getInstance() throws BDException, LoginException {
-        return getInstance(nomDB, pass);
+    public static void close() throws BDException {
+        try {
+            if (uniqueInstance != null && !uniqueInstance.isClosed()) {
+                uniqueInstance.close();
+            }
+        } catch (SQLException ex) {
+            throw new BDException(ex);
+        }
     }
 
-    public static Connection getInstance(String nomDB, String pass) throws BDException, LoginException {
-        ConnexBD.nomDB = nomDB;
-        ConnexBD.pass = pass;
-        if (uniqueInstance == null) {
-            try {
+    public static Connection getInstance() throws BDException, LoginException {
+        Vector<String> vec;
+        try {
+            if (uniqueInstance == null || uniqueInstance.isClosed()) {
+
+                vec = Controller.Controller.getIdentifiantConnex();
                 Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-                uniqueInstance = DriverManager.getConnection("jdbc:odbc:"+nomDB, "Crail", pass);
-            } catch (ClassNotFoundException e) {
-                throw new BDException(e);
-            } catch (SQLException e) {
-                throw new BDException(e);
+                uniqueInstance = DriverManager.getConnection("jdbc:odbc:" + vec.elementAt(0), "Crail", vec.elementAt(1));
             }
+        } catch (ClassNotFoundException e) {
+            throw new BDException(e);
+        } catch (SQLException e) {
+            throw new BDException(e);
         }
+
         return uniqueInstance;
     }
 }

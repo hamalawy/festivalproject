@@ -7,9 +7,14 @@ public class BDException extends Exception {
 	}
 	
     @Override
+    public String getMessage() {
+        return toString()+" Detail : \n"+e.getMessage();
+    }
+
+    @Override
 	public String toString()
 	{
-		return "Erreur avec la DB, Erreur : "+e.toString();
+		return "Erreur avec la base de données, veuillez contacter l'administrateur réseau";
 	}
 
 }
