@@ -1,5 +1,6 @@
 package Data;
 
+import Business.Scene;
 import View.VerifyData;
 import View.VerifyDataException;
 import View.groupe.GroupeNotAcceptedException;
@@ -37,9 +38,8 @@ public class GestionSceneBD {
         try {
             connex = ConnexBD.getInstance();
             Statement stat = connex.createStatement();
-            String sel = "SELECT scene.Nom FROM scene ORDER BY ASC;";
+            String sel = "SELECT scene.Nom FROM scene ORDER BY scene.Nom;";
             result = stat.executeQuery(sel);
-
             while(result.next()) {
                 vec.add(result.getString("Nom"));
             }
