@@ -86,7 +86,7 @@ public class InscriptionMembreActionPanel extends JPanel{
                 if(panelInscription.verify())
                     panelInscription.actionButAjouter();
                 else {
-                    panelInscription.getGroupePanel().getBarreInfo().setText("Veuillez compléter tous les champs");
+                   panelInscription.getGroupePanel().setInfoText("Veuillez compléter tous les champs");
                 }
             }
             else if(e.getSource() == butAjouterNouveau) {
@@ -94,7 +94,7 @@ public class InscriptionMembreActionPanel extends JPanel{
                 if(panelInscription.verify())
                     panelInscription.actionButAjouterNouveau();
                 else {
-                    panelInscription.getGroupePanel().getBarreInfo().setText("Veuillez compléter tous les champs");
+                    panelInscription.getGroupePanel().setInfoText("Veuillez compléter tous les champs");
                 }
             }
             else if(e.getSource() == butAnnuler)

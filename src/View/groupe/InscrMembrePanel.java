@@ -3,7 +3,7 @@ package View.groupe;
 import Controller.Controller;
 import Data.BDException;
 import Data.LoginException;
-import Data.MembreGroupe;
+import Business.MembreGroupe;
 import View.BarreInfo;
 import View.DateException;
 import View.DatePanel;

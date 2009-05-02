@@ -1,8 +1,8 @@
 package View.groupe;
 
 import Controller.Controller;
-import Data.GroupeID;
-import Data.MembreGroupe;
+import Business.GroupeID;
+import Business.MembreGroupe;
 import View.BarreInfo;
 import View.DateException;
 import java.awt.Dimension;

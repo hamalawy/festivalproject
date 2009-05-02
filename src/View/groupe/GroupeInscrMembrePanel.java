@@ -4,7 +4,7 @@
  */
 package View.groupe;
 
-import Data.MembreGroupe;
+import Business.MembreGroupe;
 import Data.LoginException;
 import View.DateException;
 import View.GestionFocusTextField;
@@ -16,6 +16,7 @@ import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -90,6 +91,10 @@ public class GroupeInscrMembrePanel extends InscrMembrePanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 5);
         add(comboDomaine, gridBagConstraints);
+    }
+
+    public JComboBox getComboNationalite() {
+        return comboNationalite;
     }
 
     public JButton getButAjouter() {
