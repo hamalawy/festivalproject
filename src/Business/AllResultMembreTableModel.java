@@ -1,7 +1,6 @@
 package Business;
 
 import Business.MembreGroupe;
-import java.util.GregorianCalendar;
 import java.util.Vector;
 import javax.swing.table.AbstractTableModel;
 
@@ -10,19 +9,25 @@ import javax.swing.table.AbstractTableModel;
  * @author Gérôme Quentin
  * @author Scaillet Bruno
  */
-public class AllMembresTableModel extends AbstractTableModel {
+public class AllResultMembreTableModel extends AbstractTableModel {
 
     private Vector<String> columnNames = new Vector<String>();
-    private Vector<MembreGroupe> membres = new Vector<MembreGroupe>();
+    private Vector<MembreGroupeAgrandi> membres = new Vector<MembreGroupeAgrandi>();
 
-    public AllMembresTableModel(Vector<MembreGroupe> membres) {
-        this.membres = membres;
+    public AllResultMembreTableModel() {
+        columnNames.add("Groupe");
+        columnNames.add("Nation. Gr.");
+        columnNames.add("Genre");
         columnNames.add("Nom");
         columnNames.add("Prénom");
-        columnNames.add("Nationalité");
+        columnNames.add("Nation.");
         columnNames.add("Domaine");
         columnNames.add("Instrument");
-        columnNames.add("Date naissance");
+    }
+
+    public AllResultMembreTableModel(Vector<MembreGroupeAgrandi> membres) {
+        this();
+        this.membres = membres;
     }
 
     @Override
@@ -34,27 +39,33 @@ public class AllMembresTableModel extends AbstractTableModel {
     public int getColumnCount() {
         return columnNames.size();
     }
-    
+
     @Override
-    public String getColumnName(int col) {return columnNames.elementAt(col); }
+    public String getColumnName(int col) {
+        return columnNames.elementAt(col);
+    }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        MembreGroupe mem = membres.elementAt(rowIndex);
+        MembreGroupeAgrandi mem = membres.elementAt(rowIndex);
 
         switch (columnIndex) {
             case 0:
-                return new String(mem.getNom());
+                return new String(mem.getNomGroupe());
             case 1:
-                return new String(mem.getPrenom());
+                return new String(mem.getNationaliteGroupe());
             case 2:
-                return new String(mem.getNationalite());
+                return new String(mem.getGenre());
             case 3:
-                return new String(mem.getDomaine());
+                return new String(mem.getNom());
             case 4:
-                return (mem.getInstrument() != null)?new String(mem.getInstrument()) : null;
+                return new String(mem.getPrenom());
             case 5:
-                return new String(mem.getDateNaiss().toString());
+                return new String(mem.getNationalite());
+            case 6:
+                return new String(mem.getDomaine());
+            case 7:
+                return (mem.getInstrument() != null) ? new String(mem.getInstrument()) : null;
             default:
                 return null;
         }
@@ -80,6 +91,12 @@ public class AllMembresTableModel extends AbstractTableModel {
                 c = String.class;
                 break;
             case 5:
+                c = String.class;
+                break;
+            case 6:
+                c = String.class;
+                break;
+            case 7:
                 c = String.class;
                 break;
         }
